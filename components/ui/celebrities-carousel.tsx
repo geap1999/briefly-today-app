@@ -26,7 +26,7 @@ export default function CelebritiesCarousel({ celebrities, maxCelebCardHeight, s
             style={{ width: 60, height: 60 }}
             resizeMode="contain"
           />
-          <Text className="text-2xl font-bold text-slate-800">Born Today</Text>
+          <Text className="text-2xl font-bold text-slate-800">Famous Birthdays</Text>
         </View>
         <View className="flex-row items-center gap-1.5">
           <Text className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Swipe</Text>

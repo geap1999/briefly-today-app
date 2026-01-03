@@ -4,22 +4,22 @@ import EmptyState from '@/components/ui/empty-state';
 import HeroHeader from '@/components/ui/hero-header';
 import ScoopOfTheDay from '@/components/ui/scoop-of-the-day';
 import VerticalSection from '@/components/ui/vertical-section';
+import { getScoop } from '@/services/supabase/scoop';
 import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useCallback, useMemo, useState } from 'react';
 import { Linking, Text, View } from 'react-native';
+import { InterstitialAd } from 'react-native-google-mobile-ads';
 import PagerView from 'react-native-pager-view';
 import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getScoop } from '@/services/supabase/scoop';
-import { LinearGradient } from 'expo-linear-gradient';
-import { InterstitialAd } from 'react-native-google-mobile-ads';
+import { adUnitId } from '../adconfigs';
 import "../global.css";
 import { useCelebHeights } from '../hooks/use-celeb-heights';
 import { useCurrentTime } from '../hooks/use-current-time';
 import { useDayData } from '../hooks/use-day-data';
 import { useInterstitialAd } from '../hooks/use-interstitial-ad';
 import { useScoopReveal } from '../hooks/use-scoop-reveal';
-import { adUnitId } from '../adconfigs';
 
 interface Scoop {
   id: number;
@@ -245,10 +245,10 @@ export default function HomeScreen() {
                     textShadowRadius: 4,
                   }}
                 >
-                  Today's Facts
+                  On This Day
                 </Text>
                 <Text className="text-base font-semibold text-slate-600 text-center mt-3" style={{ letterSpacing: 0.5 }}>
-                  Events, births & moments from history
+                  Real events that happened on this date in history
                 </Text>
               </View>
 
@@ -262,7 +262,7 @@ export default function HomeScreen() {
               
               {todayData.popCulture.length > 0 && <Divider />}
               <VerticalSection
-                title="Today in Pop Culture"
+                title="Pop Culture"
                 items={todayData.popCulture}
                 imagePath={require('@/assets/images/star_bird.png')}
                 gradientColors={['#EC4899', '#DB2777']}
@@ -272,7 +272,7 @@ export default function HomeScreen() {
               
               {todayData.history.length > 0 && <Divider />}
               <VerticalSection
-                title="Today in History"
+                title="History"
                 items={todayData.history}
                 imagePath={require('@/assets/images/history_bird.png')}
                 gradientColors={['#3B82F6', '#1E40AF']}
@@ -282,7 +282,7 @@ export default function HomeScreen() {
               
               {todayData.natureTech.length > 0 && <Divider />}
               <VerticalSection
-                title="Today in Breakthroughs"
+                title="Breakthroughs"
                 items={todayData.natureTech}
                 imagePath={require('@/assets/images/eureka_bird.png')}
                 gradientColors={['#10B981', '#059669']}
