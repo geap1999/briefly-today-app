@@ -24,10 +24,6 @@
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/icon.png"
-      },
-      "notification": {
-        "icon": "./assets/images/scoop_bird.png",
-        "color": "#3B82F6"
       }
     },
     "plugins": [
