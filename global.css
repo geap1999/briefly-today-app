@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Premium system-wide styles */
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer utilities {
+  .glass-light {
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+  }
+  
+  .glass-dark {
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(20px);
+  }
+  
+  .shadow-premium {
+    shadow-color: #000;
+    shadow-offset: 0px 8px;
+    shadow-opacity: 0.12;
+    shadow-radius: 20px;
+    elevation: 8;
+  }
+  
+  .shadow-soft {
+    shadow-color: #000;
+    shadow-offset: 0px 2px;
+    shadow-opacity: 0.05;
+    shadow-radius: 8px;
+    elevation: 2;
+  }
+}

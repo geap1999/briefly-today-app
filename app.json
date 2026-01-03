@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "name": "today",
+    "slug": "today",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "today",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.geap.brieflytoday"
+    },
+    "android": {
+      "package": "com.geap.brieflytoday",
+      "permissions": ["NOTIFICATIONS"],
+      "googleServicesFile": "./google-services.json",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/images/icon.png"
+      },
+      "notification": {
+        "icon": "./assets/images/scoop_bird.png",
+        "color": "#3B82F6"
+      }
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-9097683109961993~2497943815",
+          "iosAppId": "ca-app-pub-9097683109961993~3028410949",
+          "android_app_id": "ca-app-pub-9097683109961993~2497943815",
+          "ios_app_id": "ca-app-pub-9097683109961993~3028410949",
+          "userTrackingPermission": "This identifier will be used to deliver personalized ads to you.",
+          "delayAppMeasurementInit": true
+        }
+      ],
+      "expo-notifications"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "920420e6-7d67-4e1e-b5ab-18524cd2dea3"
+      }
+    }
+  }
+}
