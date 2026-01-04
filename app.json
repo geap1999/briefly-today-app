@@ -39,7 +39,11 @@
           "delayAppMeasurementInit": true
         }
       ],
-      "expo-notifications"
+      "expo-notifications",
+        {
+          "icon": "./assets/images/scoop_bird.png",
+          "color": "#ffffff"
+        }
     ],
     "extra": {
       "eas": {
