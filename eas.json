@@ -3,46 +3,34 @@
     "version": ">= 16.28.0",
     "appVersionSource": "remote"
   },
-  "build": {
-    "development": {
-      "developmentClient": true,
-      "distribution": "internal",
-      "channel": "development",
-      "env": {
-        "EXPO_DEBUG": "true"
-      },
-      "ios": {
-        "resourceClass": "m-medium"
-      }
-    },
-    "preview": {
-      "distribution": "internal",
-      "ios": {
-        "resourceClass": "m-medium"
-      },
-      "android": {
-        "buildType": "apk"
-      },
-      "channel": "preview"
-    },
-    "production-apk": {
-      "distribution": "internal",
-      "android": {
-        "buildType": "apk"
-      },
-      "ios": {
-        "resourceClass": "m-medium"
-      }
-    },
-    "production": {
-      "autoIncrement": true,
-      "channel": "production",
-      "ios": {
-        "resourceClass": "m-medium"
-      }
-    }
-  },
-  "submit": {
-    "production": {}
-  }
+	"build": {
+		"development": {
+			"developmentClient": true,
+			"distribution": "internal",
+      "env": { "EXPO_DEBUG": "true" },
+			"android": {
+				"gradleCommand": ":app:assembleDebug -x lint -x lintVitalAnalyzeRelease"
+			}
+		},
+		"preview": {
+			"distribution": "internal"
+		},
+		"production": {
+			"autoIncrement": true,
+			"android": {
+				"buildType": "app-bundle",
+				"gradleCommand": ":app:bundleRelease -x lint -x lintVitalAnalyzeRelease"
+			}
+		},
+		"production-apk": {
+			"autoIncrement": true,
+			"android": {
+				"buildType": "apk",
+				"gradleCommand": ":app:assembleRelease -x lint -x lintVitalAnalyzeRelease"
+			}
+		}
+	},
+	"submit": {
+		"production": {}
+	}
 }
