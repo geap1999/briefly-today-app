@@ -1,5 +1,6 @@
 import { differenceInSeconds } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
+import * as WebBrowser from 'expo-web-browser';
 
 export const getMovableHoliday = (month: number, day: number, year: number): string | null => {
   const date = new Date(year, month - 1, day);
@@ -45,3 +46,11 @@ export const getScoopCountdown = (now = new Date()) => {
   
   return { isPast7PM: false, hours, minutes, seconds };
 };
+
+export const handleOpenArticle = async (url: string, accentColor: string) => {
+    await WebBrowser.openBrowserAsync(url, {
+      toolbarColor: accentColor,
+      enableBarCollapsing: true,
+      showTitle: true,
+    });
+  };

@@ -1,3 +1,4 @@
+import { getFontSize, moderateScale, useResponsive } from '@/utils/responsive';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Text, View } from 'react-native';
@@ -10,6 +11,8 @@ interface Props {
 }
 
 export default function HeroHeader({ dateInfo, todayData, scrollY }: Props) {
+  const { isTablet } = useResponsive();
+  
   const headerAnimatedStyle = useAnimatedStyle(() => {
     const opacity = interpolate(
       scrollY.value,
@@ -37,6 +40,10 @@ export default function HeroHeader({ dateInfo, todayData, scrollY }: Props) {
       transform: [{ scale }, { translateY }],
     } as any;
   });
+  
+  const borderRadius = isTablet ? 40 : 32;
+  const paddingH = isTablet ? moderateScale(40) : moderateScale(32);
+  const paddingV = isTablet ? moderateScale(40) : moderateScale(32);
 
   return (
     <Animated.View entering={FadeInDown.duration(600).springify()}>
@@ -44,7 +51,7 @@ export default function HeroHeader({ dateInfo, todayData, scrollY }: Props) {
         style={[
           headerAnimatedStyle,
           { 
-            borderRadius: 32,
+            borderRadius,
             overflow: 'hidden',
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 8 },
@@ -58,22 +65,23 @@ export default function HeroHeader({ dateInfo, todayData, scrollY }: Props) {
           colors={['#8B5CF6', '#7C3AED', '#6366F1']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          className="px-8 py-8"
+          style={{ paddingHorizontal: paddingH, paddingVertical: paddingV }}
         >
-            <View className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -mr-20 -mt-20" />
-            <View className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full -ml-16 -mb-16" />
+            <View style={{ position: 'absolute', top: 0, right: 0, width: isTablet ? 200 : 160, height: isTablet ? 200 : 160, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 9999, marginRight: isTablet ? -100 : -80, marginTop: isTablet ? -100 : -80 }} />
+            <View style={{ position: 'absolute', bottom: 0, left: 0, width: isTablet ? 160 : 128, height: isTablet ? 160 : 128, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 9999, marginLeft: isTablet ? -80 : -64, marginBottom: isTablet ? -80 : -64 }} />
             
             <View className="items-center relative z-10">
-              <Text className="text-xs font-semibold tracking-[3px] uppercase text-purple-200 mb-3 opacity-90">
+              <Text className="font-semibold uppercase text-purple-200 mb-3 opacity-90" style={{ fontSize: getFontSize(12), letterSpacing: 3 }}>
                 {dateInfo.formattedDate}
               </Text>
-              <Text className="text-6xl font-black text-white mb-1 tracking-tight" style={{ letterSpacing: -1 }}>
+              <Text className="font-black text-white mb-1 tracking-tight" style={{ fontSize: getFontSize(60), letterSpacing: -1 }}>
                 {dateInfo.dayOfWeek}
               </Text>
 
               {todayData.special ? (
-                <View className="mt-4 px-6 py-3 bg-white/15 backdrop-blur-xl rounded-2xl">
-                  <Text className="text-2xl font-bold text-yellow-300 text-center" style={{ 
+                <View style={{ marginTop: isTablet ? 20 : 16, paddingHorizontal: isTablet ? 32 : 24, paddingVertical: isTablet ? 16 : 12, backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: isTablet ? 24 : 16 }}>
+                  <Text className="font-bold text-yellow-300 text-center" style={{ 
+                    fontSize: getFontSize(24),
                     textShadowColor: 'rgba(0,0,0,0.3)', 
                     textShadowOffset: { width: 0, height: 2 }, 
                     textShadowRadius: 8 
@@ -85,10 +93,10 @@ export default function HeroHeader({ dateInfo, todayData, scrollY }: Props) {
 
               {todayData.saint && (
                 <>
-                  <View className="mt-6 mb-4 h-[1px] bg-white/20 w-3/4" />
+                  <View style={{ marginTop: isTablet ? 32 : 24, marginBottom: isTablet ? 20 : 16, height: 1, backgroundColor: 'rgba(255,255,255,0.2)', width: '75%' }} />
                   <View>
-                    <Text className="text-2xs font-bold text-yellow-200 uppercase tracking-[2px] text-center mb-2">✝️ Saint of the Day</Text>
-                    <Text className="text-lg font-semibold text-white/95 text-center leading-6 px-4" numberOfLines={2}>
+                    <Text className="font-bold text-yellow-200 uppercase text-center mb-2" style={{ fontSize: getFontSize(10), letterSpacing: 2 }}>✝️ Saint of the Day</Text>
+                    <Text className="font-semibold text-white/95 text-center px-4" style={{ fontSize: getFontSize(18), lineHeight: getFontSize(24) }} numberOfLines={2}>
                       {todayData.saint}
                     </Text>
                   </View>

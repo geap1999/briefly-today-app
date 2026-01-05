@@ -1,3 +1,4 @@
+import { useResponsive } from '@/utils/responsive';
 import React from 'react';
 import { View } from 'react-native';
 
@@ -7,5 +8,8 @@ interface Props {
 }
 
 export default function Divider({ backgroundColor = 'rgba(0,0,0,0.06)', style }: Props) {
-  return <View style={[{ width: '100%', height: 1, backgroundColor }, style]} />;
+  const { isTablet } = useResponsive();
+  const height = isTablet ? 2 : 1;
+  
+  return <View style={[{ width: '100%', height, backgroundColor }, style]} />;
 }

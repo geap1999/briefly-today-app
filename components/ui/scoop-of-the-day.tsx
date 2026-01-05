@@ -1,4 +1,5 @@
-import { getScoopCountdown } from '@/utils/utils';
+import { getFontSize, moderateScale, useResponsive } from '@/utils/responsive';
+import { getScoopCountdown, handleOpenArticle } from '@/utils/utils';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { ActivityIndicator, Image, Text, TouchableOpacity, View } from 'react-native';
@@ -20,6 +21,7 @@ interface Props {
 }
 
 export default function ScoopOfTheDay({ currentTime, loading, isScoopRevealed, scoop, onScoopPress, onCardPress }: Props) {
+  const { isTablet } = useResponsive();
   const countdown = getScoopCountdown(currentTime);
 
   const scoopyAnimationStyle = useAnimatedStyle(() => {
@@ -29,6 +31,11 @@ export default function ScoopOfTheDay({ currentTime, loading, isScoopRevealed, s
       ],
     };
   });
+  
+  const borderRadius = isTablet ? 36 : 28;
+  const padding = isTablet ? moderateScale(32) : moderateScale(24);
+  const imageSize = isTablet ? 70 : 50;
+  const imageHeight = isTablet ? moderateScale(280) : moderateScale(224);
 
   if (loading && isScoopRevealed) {
     return (
@@ -41,37 +48,37 @@ export default function ScoopOfTheDay({ currentTime, loading, isScoopRevealed, s
   if (isScoopRevealed && scoop) {
     return (
       <Animated.View entering={FadeIn.duration(400)} className="my-6">
-        <TouchableOpacity activeOpacity={0.95} onPress={() => onCardPress(scoop.url)}>
-          <View className="relative overflow-hidden rounded-[28px]">
-            <LinearGradient colors={["#FFFFFF", "#FAFAFA"]} className="p-6">
+        <TouchableOpacity activeOpacity={0.95} onPress={() => handleOpenArticle(scoop.url, "#3B82F6")}>
+          <View className="relative overflow-hidden" style={{ borderRadius }}>
+            <LinearGradient colors={["#FFFFFF", "#FAFAFA"]} style={{ padding }}>
               <View className="flex-row items-center justify-between mb-4">
                 <View className="flex-row items-center gap-2">
                   <Image 
                     source={require('@/assets/images/read_bird.png')}
-                    style={{ width: 50, height: 50 }}
+                    style={{ width: imageSize, height: imageSize }}
                     resizeMode="contain"
                   />
-                  <Text className="text-xs font-semibold text-purple-600 uppercase tracking-[2px]">Today's Scoop</Text>
+                  <Text className="font-semibold text-purple-600 uppercase" style={{ fontSize: getFontSize(12), letterSpacing: 2 }}>Today's Scoop</Text>
                 </View>
-                <View className="px-3 py-1.5 bg-purple-50 rounded-full">
-                  <Text className="text-2xs font-bold text-purple-700 uppercase tracking-wide">{scoop.category}</Text>
+                <View style={{ paddingHorizontal: isTablet ? 16 : 12, paddingVertical: isTablet ? 8 : 6, backgroundColor: '#F3E8FF', borderRadius: 9999 }}>
+                  <Text className="font-bold text-purple-700 uppercase" style={{ fontSize: getFontSize(10), letterSpacing: 1 }}>{scoop.category}</Text>
                 </View>
               </View>
 
               {scoop.image_url && (
-                <View className="mb-5 overflow-hidden rounded-2xl">
-                  <Image source={{ uri: scoop.image_url }} className="w-full h-56" resizeMode="cover" />
+                <View className="mb-5 overflow-hidden" style={{ borderRadius: isTablet ? 24 : 16 }}>
+                  <Image source={{ uri: scoop.image_url }} style={{ width: '100%', height: imageHeight }} resizeMode="cover" />
                 </View>
               )}
 
-              <Text className="text-2xl font-bold text-slate-900 mb-3 leading-tight">{scoop.title}</Text>
-              <Text className="text-base text-slate-600 leading-relaxed mb-4">{scoop.content}</Text>
+              <Text className="font-bold text-slate-900 mb-3 leading-tight" style={{ fontSize: getFontSize(24) }}>{scoop.title}</Text>
+              <Text className="text-slate-600 leading-relaxed mb-4" style={{ fontSize: getFontSize(16) }}>{scoop.content}</Text>
 
               <View className="flex-row items-center justify-between pt-3 border-t border-slate-100">
-                <Text className="text-sm font-semibold text-slate-700">📰 {scoop.source_name}</Text>
+                <Text className="font-semibold text-slate-700" style={{ fontSize: getFontSize(14) }}>📰 {scoop.source_name}</Text>
                 <View className="flex-row items-center gap-1.5">
-                  <Text className="text-sm font-semibold text-purple-600">Read more</Text>
-                  <Text className="text-purple-600">→</Text>
+                  <Text className="font-semibold text-purple-600" style={{ fontSize: getFontSize(14) }}>Read more</Text>
+                  <Text className="text-purple-600" style={{ fontSize: getFontSize(14) }}>→</Text>
                 </View>
               </View>
             </LinearGradient>

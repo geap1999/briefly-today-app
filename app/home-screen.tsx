@@ -5,6 +5,7 @@ import HeroHeader from '@/components/ui/hero-header';
 import ScoopOfTheDay from '@/components/ui/scoop-of-the-day';
 import VerticalSection from '@/components/ui/vertical-section';
 import { getScoop } from '@/services/supabase/scoop';
+import { getFontSize, getHorizontalPadding, getMaxContentWidth, useResponsive } from '@/utils/responsive';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useCallback, useMemo, useState } from 'react';
@@ -93,6 +94,10 @@ const seasonThemes: Record<Season, SeasonTheme> = {
 
 export default function HomeScreen() {
   const { todayData, dateInfo } = useDayData();
+  const { isTablet, width } = useResponsive();
+  const horizontalPadding = getHorizontalPadding();
+  const maxContentWidth = getMaxContentWidth();
+  
   const [adLoaded, setAdLoaded] = useState(false);
   const [isScoopRevealed, setIsScoopRevealed] = useState(false);
   
@@ -199,31 +204,37 @@ export default function HomeScreen() {
           <View key="1" style={{ flex: 1 }}>
             <Animated.ScrollView
               showsVerticalScrollIndicator={false}
-              className="px-5"
-              contentContainerStyle={{ paddingTop: 20, paddingBottom: 40 }}
+              contentContainerStyle={{ 
+                paddingHorizontal: horizontalPadding, 
+                paddingTop: 20, 
+                paddingBottom: 40,
+                alignItems: 'center',
+              }}
               onScroll={scrollHandler}
               scrollEventThrottle={16}
             >
-              {/* Swipe indicator at top */}
-              <View className="items-center mb-6 mt-4">
-                <View className="flex-row items-center gap-2 px-5 py-3 bg-white/50 rounded-full">
-                  <Text className="text-xs font-bold tracking-wider uppercase" style={{ color: seasonTheme.accentColor, letterSpacing: 1.5 }}>
-                    Swipe for today's facts
-                  </Text>
-                  <Text className="text-base" style={{ color: seasonTheme.accentColor }}>→</Text>
+              <View style={{ width: '100%', maxWidth: typeof maxContentWidth === 'number' ? maxContentWidth : undefined }}>
+                {/* Swipe indicator at top */}
+                <View className="items-center mb-6 mt-4">
+                  <View className="flex-row items-center gap-2 px-5 py-3 bg-white/50 rounded-full">
+                    <Text className="font-bold tracking-wider uppercase" style={{ fontSize: getFontSize(12), color: seasonTheme.accentColor, letterSpacing: 1.5 }}>
+                      Swipe for today's facts
+                    </Text>
+                    <Text style={{ fontSize: getFontSize(16), color: seasonTheme.accentColor }}>→</Text>
+                  </View>
                 </View>
+
+                <HeroHeader dateInfo={dateInfo} todayData={todayData} scrollY={scrollY} />
+
+                <ScoopOfTheDay
+                  currentTime={currentTime}
+                  loading={loading}
+                  isScoopRevealed={isScoopRevealed}
+                  scoop={scoop}
+                  onScoopPress={handleScoopPress}
+                  onCardPress={handleCardPress}
+                />
               </View>
-
-              <HeroHeader dateInfo={dateInfo} todayData={todayData} scrollY={scrollY} />
-
-              <ScoopOfTheDay
-                currentTime={currentTime}
-                loading={loading}
-                isScoopRevealed={isScoopRevealed}
-                scoop={scoop}
-                onScoopPress={handleScoopPress}
-                onCardPress={handleCardPress}
-              />
             </Animated.ScrollView>
           </View>
 
@@ -231,72 +242,79 @@ export default function HomeScreen() {
           <View key="2" style={{ flex: 1 }}>
             <Animated.ScrollView
               showsVerticalScrollIndicator={false}
-              className="px-5"
-              contentContainerStyle={{ paddingTop: 40, paddingBottom: 40 }}
+              contentContainerStyle={{ 
+                paddingHorizontal: horizontalPadding, 
+                paddingTop: 40, 
+                paddingBottom: 40,
+                alignItems: 'center',
+              }}
             >
-              <View className="mb-10">
-                <Text 
-                  className="text-5xl font-black text-center mb-1"
-                  style={{ 
-                    color: seasonTheme.accentColor,
-                    letterSpacing: -1,
-                    textShadowColor: 'rgba(0,0,0,0.08)',
-                    textShadowOffset: { width: 0, height: 2 },
-                    textShadowRadius: 4,
-                  }}
-                >
-                  On This Day
-                </Text>
-                <Text className="text-base font-semibold text-slate-600 text-center mt-3" style={{ letterSpacing: 0.5 }}>
-                  Real events that happened on this date in history
-                </Text>
-              </View>
+              <View style={{ width: '100%', maxWidth: typeof maxContentWidth === 'number' ? maxContentWidth : undefined }}>
+                <View className="mb-10">
+                  <Text 
+                    className="font-black text-center mb-1"
+                    style={{ 
+                      fontSize: getFontSize(48),
+                      color: seasonTheme.accentColor,
+                      letterSpacing: -1,
+                      textShadowColor: 'rgba(0,0,0,0.08)',
+                      textShadowOffset: { width: 0, height: 2 },
+                      textShadowRadius: 4,
+                    }}
+                  >
+                    On This Day
+                  </Text>
+                  <Text className="font-semibold text-slate-600 text-center mt-3" style={{ fontSize: getFontSize(16), letterSpacing: 0.5 }}>
+                    Real events that happened on this date in history
+                  </Text>
+                </View>
 
-              {todayData.celebrities.length > 0 && <Divider />}
-              <CelebritiesCarousel
-                celebrities={todayData.celebrities}
-                maxCelebCardHeight={maxCelebCardHeight}
-                setCelebHeights={setCelebHeights}
-                onCardPress={handleCardPress}
-              />
-              
-              {todayData.popCulture.length > 0 && <Divider />}
-              <VerticalSection
-                title="Pop Culture"
-                items={todayData.popCulture}
-                imagePath={require('@/assets/images/star_bird.png')}
-                gradientColors={['#EC4899', '#DB2777']}
-                accentColor="#EC4899"
-                onCardPress={handleCardPress}
-              />
-              
-              {todayData.history.length > 0 && <Divider />}
-              <VerticalSection
-                title="History"
-                items={todayData.history}
-                imagePath={require('@/assets/images/history_bird.png')}
-                gradientColors={['#3B82F6', '#1E40AF']}
-                accentColor="#3B82F6"
-                onCardPress={handleCardPress}
-              />
-              
-              {todayData.natureTech.length > 0 && <Divider />}
-              <VerticalSection
-                title="Breakthroughs"
-                items={todayData.natureTech}
-                imagePath={require('@/assets/images/eureka_bird.png')}
-                gradientColors={['#10B981', '#059669']}
-                accentColor="#10B981"
-                onCardPress={handleCardPress}
-              />
-              
-              <EmptyState hasAnyContent={hasAnyContent} />
-              
-              <View className="pt-6 items-center">
-                <View className="w-12 h-1 rounded-full mb-3" style={{ backgroundColor: seasonTheme.accentColor, opacity: 0.3 }} />
-                <Text className="text-xs font-medium" style={{ color: seasonTheme.accentColor, opacity: 0.7 }}>
-                  Discover something new every day
-                </Text>
+                {todayData.celebrities.length > 0 && <Divider />}
+                <CelebritiesCarousel
+                  celebrities={todayData.celebrities}
+                  maxCelebCardHeight={maxCelebCardHeight}
+                  setCelebHeights={setCelebHeights}
+                  onCardPress={handleCardPress}
+                />
+                
+                {todayData.popCulture.length > 0 && <Divider />}
+                <VerticalSection
+                  title="Pop Culture"
+                  items={todayData.popCulture}
+                  imagePath={require('@/assets/images/star_bird.png')}
+                  gradientColors={['#EC4899', '#DB2777']}
+                  accentColor="#EC4899"
+                  onCardPress={handleCardPress}
+                />
+                
+                {todayData.history.length > 0 && <Divider />}
+                <VerticalSection
+                  title="History"
+                  items={todayData.history}
+                  imagePath={require('@/assets/images/history_bird.png')}
+                  gradientColors={['#3B82F6', '#1E40AF']}
+                  accentColor="#3B82F6"
+                  onCardPress={handleCardPress}
+                />
+                
+                {todayData.natureTech.length > 0 && <Divider />}
+                <VerticalSection
+                  title="Breakthroughs"
+                  items={todayData.natureTech}
+                  imagePath={require('@/assets/images/eureka_bird.png')}
+                  gradientColors={['#10B981', '#059669']}
+                  accentColor="#10B981"
+                  onCardPress={handleCardPress}
+                />
+                
+                <EmptyState hasAnyContent={hasAnyContent} />
+                
+                <View className="pt-6 items-center">
+                  <View className="rounded-full mb-3" style={{ width: isTablet ? 60 : 48, height: 4, backgroundColor: seasonTheme.accentColor, opacity: 0.3 }} />
+                  <Text className="font-medium" style={{ fontSize: getFontSize(12), color: seasonTheme.accentColor, opacity: 0.7 }}>
+                    Discover something new every day
+                  </Text>
+                </View>
               </View>
             </Animated.ScrollView>
           </View>

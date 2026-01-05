@@ -19,7 +19,9 @@
     },
     "android": {
       "package": "com.geap.brieflytoday",
-      "permissions": ["NOTIFICATIONS"],
+      "permissions": [
+        "NOTIFICATIONS"
+      ],
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
@@ -39,11 +41,19 @@
           "delayAppMeasurementInit": true
         }
       ],
-      "expo-notifications",
+      [
+        "expo-notifications",
         {
           "icon": "./assets/images/scoop_bird.png",
           "color": "#ffffff"
         }
+      ],
+      [
+        "expo-web-browser",
+        {
+          "experimentalLauncherActivity": true
+        }
+      ]
     ],
     "extra": {
       "eas": {

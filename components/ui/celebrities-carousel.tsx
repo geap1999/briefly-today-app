@@ -1,11 +1,8 @@
+import { getFontSize, moderateScale, useResponsive } from '@/utils/responsive';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { SlideInRight } from 'react-native-reanimated';
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const CARD_GAP = 12;
-const CELEB_CARD_WIDTH = Math.min(300, Math.round(SCREEN_WIDTH * 0.75));
 
 interface Props {
   celebrities: any[];
@@ -15,7 +12,15 @@ interface Props {
 }
 
 export default function CelebritiesCarousel({ celebrities, maxCelebCardHeight, setCelebHeights, onCardPress }: Props) {
+  const { width, isTablet } = useResponsive();
+  
   if (!celebrities || celebrities.length === 0) return null;
+  
+  const CARD_GAP = isTablet ? 16 : 12;
+  const CELEB_CARD_WIDTH = isTablet ? Math.min(400, Math.round(width * 0.6)) : Math.min(300, Math.round(width * 0.75));
+  const imageSize = isTablet ? 80 : 60;
+  const borderRadius = isTablet ? 32 : 24;
+  const cardPadding = isTablet ? moderateScale(32) : moderateScale(24);
 
   return (
     <Animated.View entering={SlideInRight.duration(600)} className="my-6">
@@ -23,14 +28,14 @@ export default function CelebritiesCarousel({ celebrities, maxCelebCardHeight, s
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Image 
             source={require('@/assets/images/baby_bird.png')}
-            style={{ width: 60, height: 60 }}
+            style={{ width: imageSize, height: imageSize }}
             resizeMode="contain"
           />
-          <Text className="text-2xl font-bold text-slate-800">Famous Birthdays</Text>
+          <Text className="font-bold text-slate-800" style={{ fontSize: getFontSize(24), marginLeft: 8 }}>Famous Birthdays</Text>
         </View>
         <View className="flex-row items-center gap-1.5">
-          <Text className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Swipe</Text>
-          <Text className="text-slate-400">→</Text>
+          <Text className="font-semibold text-slate-500 uppercase" style={{ fontSize: getFontSize(12), letterSpacing: 1 }}>Swipe</Text>
+          <Text className="text-slate-400" style={{ fontSize: getFontSize(14) }}>→</Text>
         </View>
       </View>
 
@@ -43,8 +48,8 @@ export default function CelebritiesCarousel({ celebrities, maxCelebCardHeight, s
       >
         {celebrities.map((item, index) => (
           <TouchableOpacity key={`${item.title}-${index}`} activeOpacity={0.92} onPress={() => onCardPress(item.wikipedia_url)}>
-            <View className="rounded-[24px] overflow-hidden mx-2" style={{ width: CELEB_CARD_WIDTH, ...(maxCelebCardHeight ? { height: maxCelebCardHeight } : {}) }}>
-              <LinearGradient colors={["#FBBF24", "#F59E0B", "#EF4444"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} className={`px-6 py-6 ${maxCelebCardHeight ? 'h-full' : ''}`} onLayout={(event) => {
+            <View className="overflow-hidden mx-2" style={{ borderRadius, width: CELEB_CARD_WIDTH, ...(maxCelebCardHeight ? { height: maxCelebCardHeight } : {}) }}>
+              <LinearGradient colors={["#FBBF24", "#F59E0B", "#EF4444"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ padding: cardPadding, ...(maxCelebCardHeight ? { height: '100%' } : {}) }} onLayout={(event) => {
                 if (!maxCelebCardHeight) {
                   const { height } = event.nativeEvent.layout;
                   setCelebHeights(prev => {
@@ -54,11 +59,14 @@ export default function CelebritiesCarousel({ celebrities, maxCelebCardHeight, s
                   });
                 }
               }}>
-                <View className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12" />
+                <View style={{ position: 'absolute', top: 0, right: 0, width: isTablet ? 120 : 96, height: isTablet ? 120 : 96, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 9999, marginRight: isTablet ? -60 : -48, marginTop: isTablet ? -60 : -48 }} />
                 <View className="relative z-10">
-                  <Text className="text-xl font-bold text-white mb-3 leading-snug" numberOfLines={2}>{item.title}</Text>
-                  <Text className="text-base text-white/95 leading-relaxed mb-4" numberOfLines={5}>{item.content}</Text>
-                  <View className="flex-row items-center gap-2"><View className="w-1 h-1 rounded-full bg-white" /><Text className="text-sm font-semibold text-white">Learn more</Text></View>
+                  <Text className="font-bold text-white mb-3 leading-snug" style={{ fontSize: getFontSize(20) }} numberOfLines={2}>{item.title}</Text>
+                  <Text className="text-white/95 leading-relaxed mb-4" style={{ fontSize: getFontSize(16) }} numberOfLines={5}>{item.content}</Text>
+                  <View className="flex-row items-center gap-2">
+                    <View style={{ width: isTablet ? 6 : 4, height: isTablet ? 6 : 4, borderRadius: 9999, backgroundColor: 'white' }} />
+                    <Text className="font-semibold text-white" style={{ fontSize: getFontSize(14) }}>Learn more</Text>
+                  </View>
                 </View>
               </LinearGradient>
             </View>
