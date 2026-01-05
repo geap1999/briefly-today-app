@@ -58,7 +58,7 @@ export default function ScoopOfTheDay({ currentTime, loading, isScoopRevealed, s
                     style={{ width: imageSize, height: imageSize }}
                     resizeMode="contain"
                   />
-                  <Text className="font-semibold text-purple-600 uppercase" style={{ fontSize: getFontSize(11), letterSpacing: 2 }}>Today's Scoop</Text>
+                  <Text className="font-semibold text-purple-600 uppercase" style={{ fontSize: getFontSize(11), letterSpacing: 2 }}>Today&apos;s Scoop</Text>
                 </View>
                 <View style={{ paddingHorizontal: isTablet ? 14 : 10, paddingVertical: isTablet ? 6 : 5, backgroundColor: '#F3E8FF', borderRadius: 9999 }}>
                   <Text className="font-bold text-purple-700 uppercase" style={{ fontSize: getFontSize(9), letterSpacing: 1 }}>{scoop.category}</Text>

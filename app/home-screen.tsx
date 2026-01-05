@@ -94,7 +94,7 @@ const seasonThemes: Record<Season, SeasonTheme> = {
 
 export default function HomeScreen() {
   const { todayData, dateInfo } = useDayData();
-  const { isTablet, width } = useResponsive();
+  const { isTablet } = useResponsive();
   const horizontalPadding = getHorizontalPadding();
   const maxContentWidth = getMaxContentWidth();
   
@@ -218,7 +218,7 @@ export default function HomeScreen() {
                 <View className="items-center mb-6 mt-4">
                   <View className="flex-row items-center gap-2 px-5 py-3 bg-white/50 rounded-full">
                     <Text className="font-bold tracking-wider uppercase" style={{ fontSize: getFontSize(12), color: seasonTheme.accentColor, letterSpacing: 1.5 }}>
-                      Swipe for today's facts
+                      Swipe for today&apos;s facts
                     </Text>
                     <Text style={{ fontSize: getFontSize(16), color: seasonTheme.accentColor }}>→</Text>
                   </View>
