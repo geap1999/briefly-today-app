@@ -33,9 +33,9 @@ export default function ScoopOfTheDay({ currentTime, loading, isScoopRevealed, s
   });
   
   const borderRadius = isTablet ? 36 : 28;
-  const padding = isTablet ? moderateScale(32) : moderateScale(24);
-  const imageSize = isTablet ? 70 : 50;
-  const imageHeight = isTablet ? moderateScale(280) : moderateScale(224);
+  const padding = isTablet ? moderateScale(24) : moderateScale(18);
+  const imageSize = isTablet ? 60 : 45;
+  const imageHeight = isTablet ? moderateScale(240) : moderateScale(180);
 
   if (loading && isScoopRevealed) {
     return (
@@ -47,38 +47,38 @@ export default function ScoopOfTheDay({ currentTime, loading, isScoopRevealed, s
 
   if (isScoopRevealed && scoop) {
     return (
-      <Animated.View entering={FadeIn.duration(400)} className="my-6">
+      <Animated.View entering={FadeIn.duration(400)} className="my-4">
         <TouchableOpacity activeOpacity={0.95} onPress={() => handleOpenArticle(scoop.url, "#3B82F6")}>
           <View className="relative overflow-hidden" style={{ borderRadius }}>
             <LinearGradient colors={["#FFFFFF", "#FAFAFA"]} style={{ padding }}>
-              <View className="flex-row items-center justify-between mb-4">
+              <View className="flex-row items-center justify-between mb-3">
                 <View className="flex-row items-center gap-2">
                   <Image 
                     source={require('@/assets/images/read_bird.png')}
                     style={{ width: imageSize, height: imageSize }}
                     resizeMode="contain"
                   />
-                  <Text className="font-semibold text-purple-600 uppercase" style={{ fontSize: getFontSize(12), letterSpacing: 2 }}>Today's Scoop</Text>
+                  <Text className="font-semibold text-purple-600 uppercase" style={{ fontSize: getFontSize(11), letterSpacing: 2 }}>Today's Scoop</Text>
                 </View>
-                <View style={{ paddingHorizontal: isTablet ? 16 : 12, paddingVertical: isTablet ? 8 : 6, backgroundColor: '#F3E8FF', borderRadius: 9999 }}>
-                  <Text className="font-bold text-purple-700 uppercase" style={{ fontSize: getFontSize(10), letterSpacing: 1 }}>{scoop.category}</Text>
+                <View style={{ paddingHorizontal: isTablet ? 14 : 10, paddingVertical: isTablet ? 6 : 5, backgroundColor: '#F3E8FF', borderRadius: 9999 }}>
+                  <Text className="font-bold text-purple-700 uppercase" style={{ fontSize: getFontSize(9), letterSpacing: 1 }}>{scoop.category}</Text>
                 </View>
               </View>
 
               {scoop.image_url && (
-                <View className="mb-5 overflow-hidden" style={{ borderRadius: isTablet ? 24 : 16 }}>
+                <View className="mb-4 overflow-hidden" style={{ borderRadius: isTablet ? 24 : 16 }}>
                   <Image source={{ uri: scoop.image_url }} style={{ width: '100%', height: imageHeight }} resizeMode="cover" />
                 </View>
               )}
 
-              <Text className="font-bold text-slate-900 mb-3 leading-tight" style={{ fontSize: getFontSize(24) }}>{scoop.title}</Text>
-              <Text className="text-slate-600 leading-relaxed mb-4" style={{ fontSize: getFontSize(16) }}>{scoop.content}</Text>
+              <Text className="font-bold text-slate-900 mb-2 leading-tight" style={{ fontSize: getFontSize(22) }}>{scoop.title}</Text>
+              <Text className="text-slate-600 leading-relaxed mb-3" style={{ fontSize: getFontSize(15) }}>{scoop.content}</Text>
 
-              <View className="flex-row items-center justify-between pt-3 border-t border-slate-100">
-                <Text className="font-semibold text-slate-700" style={{ fontSize: getFontSize(14) }}>📰 {scoop.source_name}</Text>
+              <View className="flex-row items-center justify-between pt-2.5 border-t border-slate-100">
+                <Text className="font-semibold text-slate-700" style={{ fontSize: getFontSize(13) }}>📰 {scoop.source_name}</Text>
                 <View className="flex-row items-center gap-1.5">
-                  <Text className="font-semibold text-purple-600" style={{ fontSize: getFontSize(14) }}>Read more</Text>
-                  <Text className="text-purple-600" style={{ fontSize: getFontSize(14) }}>→</Text>
+                  <Text className="font-semibold text-purple-600" style={{ fontSize: getFontSize(13) }}>Read more</Text>
+                  <Text className="text-purple-600" style={{ fontSize: getFontSize(13) }}>→</Text>
                 </View>
               </View>
             </LinearGradient>
@@ -89,8 +89,8 @@ export default function ScoopOfTheDay({ currentTime, loading, isScoopRevealed, s
   }
 
   return (
-    <Animated.View entering={FadeInUp.duration(500)} className="my-8">
-      <View className="mb-4 px-1 items-center w-full">
+    <Animated.View entering={FadeInUp.duration(500)} className="my-5">
+      <View className="mb-3 px-1 items-center w-full">
         <Text 
           className="text-4xl font-black text-slate-800"
           style={{ 

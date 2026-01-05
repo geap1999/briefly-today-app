@@ -1,23 +1,19 @@
 import { Dimensions, useWindowDimensions } from 'react-native';
 
-// Dimensions de base (design mobile de référence)
 const BASE_WIDTH = 375;
 const BASE_HEIGHT = 812;
 
 // Breakpoints
 export const BREAKPOINTS = {
-  small: 360,    // Petits téléphones
-  medium: 768,   // Grandes téléphones / petites tablettes
-  large: 1024,   // Tablettes
-  xlarge: 1280,  // Grandes tablettes / desktop
+  small: 360,    // Small phones
+  medium: 768,   // Big phones
+  large: 1024,   // Tablets
+  xlarge: 1280,  // Desktops
 } as const;
 
 export type DeviceType = 'phone' | 'tablet' | 'desktop';
 export type Orientation = 'portrait' | 'landscape';
 
-/**
- * Hook pour obtenir les informations sur l'appareil
- */
 export const useResponsive = () => {
   const { width, height } = useWindowDimensions();
   
@@ -46,34 +42,23 @@ export const useResponsive = () => {
   };
 };
 
-/**
- * Scale une valeur basée sur la largeur de l'écran
- */
+
 export const scaleWidth = (size: number): number => {
   const { width } = Dimensions.get('window');
   return (width / BASE_WIDTH) * size;
 };
 
-/**
- * Scale une valeur basée sur la hauteur de l'écran
- */
 export const scaleHeight = (size: number): number => {
   const { height } = Dimensions.get('window');
   return (height / BASE_HEIGHT) * size;
 };
 
-/**
- * Scale modéré - évite que les tailles deviennent trop grandes sur tablette
- */
 export const moderateScale = (size: number, factor = 0.5): number => {
   const { width } = Dimensions.get('window');
   const scale = width / BASE_WIDTH;
   return size + (scale - 1) * size * factor;
 };
 
-/**
- * Retourne une valeur différente selon le type d'appareil
- */
 export const responsive = <T,>(config: {
   phone?: T;
   tablet?: T;
@@ -95,9 +80,6 @@ export const responsive = <T,>(config: {
   return config.default;
 };
 
-/**
- * Retourne le nombre de colonnes selon la taille d'écran
- */
 export const getColumns = (defaultCols: number = 1): number => {
   const { width } = Dimensions.get('window');
   
@@ -108,9 +90,6 @@ export const getColumns = (defaultCols: number = 1): number => {
   return defaultCols;
 };
 
-/**
- * Padding horizontal responsive
- */
 export const getHorizontalPadding = (): number => {
   const { width } = Dimensions.get('window');
   
@@ -121,9 +100,6 @@ export const getHorizontalPadding = (): number => {
   return 20; // mobile
 };
 
-/**
- * Largeur maximale du contenu pour éviter que ça s'étire trop sur tablette
- */
 export const getMaxContentWidth = (): number | string => {
   const { width } = Dimensions.get('window');
   
@@ -132,9 +108,6 @@ export const getMaxContentWidth = (): number | string => {
   return '100%';
 };
 
-/**
- * Taille de police responsive
- */
 export const getFontSize = (baseSize: number): number => {
   return moderateScale(baseSize, 0.3);
 };

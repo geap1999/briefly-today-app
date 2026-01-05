@@ -42,8 +42,8 @@ export default function HeroHeader({ dateInfo, todayData, scrollY }: Props) {
   });
   
   const borderRadius = isTablet ? 40 : 32;
-  const paddingH = isTablet ? moderateScale(40) : moderateScale(32);
-  const paddingV = isTablet ? moderateScale(40) : moderateScale(32);
+  const paddingH = isTablet ? moderateScale(45) : moderateScale(36);
+  const paddingV = isTablet ? moderateScale(45) : moderateScale(48);
 
   return (
     <Animated.View entering={FadeInDown.duration(600).springify()}>
@@ -71,17 +71,17 @@ export default function HeroHeader({ dateInfo, todayData, scrollY }: Props) {
             <View style={{ position: 'absolute', bottom: 0, left: 0, width: isTablet ? 160 : 128, height: isTablet ? 160 : 128, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 9999, marginLeft: isTablet ? -80 : -64, marginBottom: isTablet ? -80 : -64 }} />
             
             <View className="items-center relative z-10">
-              <Text className="font-semibold uppercase text-purple-200 mb-3 opacity-90" style={{ fontSize: getFontSize(12), letterSpacing: 3 }}>
+              <Text className="font-semibold uppercase text-purple-200 mb-2 opacity-90" style={{ fontSize: getFontSize(11), letterSpacing: 3 }}>
                 {dateInfo.formattedDate}
               </Text>
-              <Text className="font-black text-white mb-1 tracking-tight" style={{ fontSize: getFontSize(60), letterSpacing: -1 }}>
+              <Text className="font-black text-white mb-1 tracking-tight" style={{ fontSize: getFontSize(52), letterSpacing: -1 }}>
                 {dateInfo.dayOfWeek}
               </Text>
 
               {todayData.special ? (
-                <View style={{ marginTop: isTablet ? 20 : 16, paddingHorizontal: isTablet ? 32 : 24, paddingVertical: isTablet ? 16 : 12, backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: isTablet ? 24 : 16 }}>
+                <View style={{ marginTop: isTablet ? 16 : 12, paddingHorizontal: isTablet ? 28 : 20, paddingVertical: isTablet ? 12 : 10, backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: isTablet ? 24 : 16 }}>
                   <Text className="font-bold text-yellow-300 text-center" style={{ 
-                    fontSize: getFontSize(24),
+                    fontSize: getFontSize(22),
                     textShadowColor: 'rgba(0,0,0,0.3)', 
                     textShadowOffset: { width: 0, height: 2 }, 
                     textShadowRadius: 8 
@@ -93,10 +93,10 @@ export default function HeroHeader({ dateInfo, todayData, scrollY }: Props) {
 
               {todayData.saint && (
                 <>
-                  <View style={{ marginTop: isTablet ? 32 : 24, marginBottom: isTablet ? 20 : 16, height: 1, backgroundColor: 'rgba(255,255,255,0.2)', width: '75%' }} />
+                  <View style={{ marginTop: isTablet ? 20 : 16, marginBottom: isTablet ? 14 : 12, height: 1, backgroundColor: 'rgba(255,255,255,0.2)', width: '75%' }} />
                   <View>
-                    <Text className="font-bold text-yellow-200 uppercase text-center mb-2" style={{ fontSize: getFontSize(10), letterSpacing: 2 }}>✝️ Saint of the Day</Text>
-                    <Text className="font-semibold text-white/95 text-center px-4" style={{ fontSize: getFontSize(18), lineHeight: getFontSize(24) }} numberOfLines={2}>
+                    <Text className="font-bold text-yellow-200 uppercase text-center mb-1.5" style={{ fontSize: getFontSize(9), letterSpacing: 2 }}>✝️ Saint of the Day</Text>
+                    <Text className="font-semibold text-white/95 text-center px-4" style={{ fontSize: getFontSize(16), lineHeight: getFontSize(22) }} numberOfLines={2}>
                       {todayData.saint}
                     </Text>
                   </View>
