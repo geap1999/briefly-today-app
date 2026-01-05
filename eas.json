@@ -10,15 +10,39 @@
       "channel": "development",
       "env": {
         "EXPO_DEBUG": "true"
+      },
+      "ios": {
+        "resourceClass": "m-medium"
       }
     },
     "preview": {
       "distribution": "internal",
+      "ios": {
+        "resourceClass": "m-medium"
+      },
+      "android": {
+        "buildType": "apk"
+      },
       "channel": "preview"
+    },
+    "production-apk": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "resourceClass": "m-medium"
+      }
     },
     "production": {
       "autoIncrement": true,
-      "channel": "production"
+      "channel": "production",
+      "ios": {
+        "resourceClass": "m-medium"
+      }
     }
+  },
+  "submit": {
+    "production": {}
   }
 }
