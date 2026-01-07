@@ -11,10 +11,10 @@ export function useScoopReveal(
       try {
         const lastDate = await AsyncStorage.getItem('last_revealed_date');
         const today = new Date().toDateString();
+        await fetchDailyScoop();
 
         if (lastDate === today) {
           setIsScoopRevealed(true);
-          await fetchDailyScoop();
         } else {
           setIsScoopRevealed(false);
         }

@@ -207,7 +207,7 @@ export default function HomeScreen() {
               contentContainerStyle={{ 
                 paddingHorizontal: horizontalPadding, 
                 paddingTop: 20, 
-                paddingBottom: 40,
+                paddingBottom: 110,
                 alignItems: 'center',
               }}
               onScroll={scrollHandler}
@@ -229,7 +229,7 @@ export default function HomeScreen() {
                 <ScoopOfTheDay
                   currentTime={currentTime}
                   loading={loading}
-                  isScoopRevealed={isScoopRevealed}
+                  isScoopRevealed={true}
                   scoop={scoop}
                   onScoopPress={handleScoopPress}
                   onCardPress={handleCardPress}
@@ -281,7 +281,7 @@ export default function HomeScreen() {
                 <VerticalSection
                   title="Pop Culture"
                   items={todayData.popCulture}
-                  imagePath={require('@/assets/images/star_bird.png')}
+                  imagePath={require('@/assets/images/pop.png')}
                   gradientColors={['#EC4899', '#DB2777']}
                   accentColor="#EC4899"
                   onCardPress={handleCardPress}
@@ -291,7 +291,7 @@ export default function HomeScreen() {
                 <VerticalSection
                   title="History"
                   items={todayData.history}
-                  imagePath={require('@/assets/images/history_bird.png')}
+                  imagePath={require('@/assets/images/history.png')}
                   gradientColors={['#3B82F6', '#1E40AF']}
                   accentColor="#3B82F6"
                   onCardPress={handleCardPress}
@@ -301,7 +301,7 @@ export default function HomeScreen() {
                 <VerticalSection
                   title="Breakthroughs"
                   items={todayData.natureTech}
-                  imagePath={require('@/assets/images/eureka_bird.png')}
+                  imagePath={require('@/assets/images/eureka.png')}
                   gradientColors={['#10B981', '#059669']}
                   accentColor="#10B981"
                   onCardPress={handleCardPress}

@@ -54,7 +54,7 @@ export default function ScoopOfTheDay({ currentTime, loading, isScoopRevealed, s
               <View className="flex-row items-center justify-between mb-3">
                 <View className="flex-row items-center gap-2">
                   <Image 
-                    source={require('@/assets/images/read_bird.png')}
+                    source={require('@/assets/images/reading.png')}
                     style={{ width: imageSize, height: imageSize }}
                     resizeMode="contain"
                   />
@@ -116,7 +116,7 @@ export default function ScoopOfTheDay({ currentTime, loading, isScoopRevealed, s
             <LinearGradient colors={["#FFD580", "#FF9900", "#FF7300"]} className="px-8 py-14 items-center justify-center">
               <View className="items-center relative z-10">
                 <Image 
-                  source={require('@/assets/images/scoop_delivered.png')}
+                  source={require('@/assets/images/delivered.png')}
                   style={{ width: 40, height: 40, marginBottom: 4, marginTop: -12 }}
                   resizeMode="contain"
                 />
@@ -131,8 +131,8 @@ export default function ScoopOfTheDay({ currentTime, loading, isScoopRevealed, s
           <LinearGradient colors={["#FAF5FF", "#F3E8FF"]} className="px-6 py-16">
             <View className="items-center">
               <Animated.Image 
-                source={require('@/assets/images/scoop_bird.png')}
-                style={[{ width: 27, height: 27, marginBottom: 4, marginTop: -16 }, scoopyAnimationStyle]}
+                source={require('@/assets/images/delivery.png')}
+                style={[{ width: 40, height: 40, marginBottom: 4, marginTop: -24 }, scoopyAnimationStyle]}
                 resizeMode="contain"
               />
               <Text className="text-sm font-semibold text-purple-700 uppercase tracking-[2px] mb-6">Unlocks at 7:00 PM ET</Text>

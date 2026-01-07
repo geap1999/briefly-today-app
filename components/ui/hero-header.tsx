@@ -43,7 +43,7 @@ export default function HeroHeader({ dateInfo, todayData, scrollY }: Props) {
   
   const borderRadius = isTablet ? 40 : 32;
   const paddingH = isTablet ? moderateScale(45) : moderateScale(36);
-  const paddingV = isTablet ? moderateScale(45) : moderateScale(48);
+  const paddingV = isTablet ? moderateScale(30) : moderateScale(35);
 
   return (
     <Animated.View entering={FadeInDown.duration(600).springify()}>
@@ -74,7 +74,7 @@ export default function HeroHeader({ dateInfo, todayData, scrollY }: Props) {
               <Text className="font-semibold uppercase text-purple-200 mb-2 opacity-90" style={{ fontSize: getFontSize(11), letterSpacing: 3 }}>
                 {dateInfo.formattedDate}
               </Text>
-              <Text className="font-black text-white mb-1 tracking-tight" style={{ fontSize: getFontSize(52), letterSpacing: -1 }}>
+              <Text className="font-black text-white mb-1 tracking-tight" style={{ fontSize: getFontSize(36), letterSpacing: -1 }}>
                 {dateInfo.dayOfWeek}
               </Text>
 

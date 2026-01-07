@@ -44,7 +44,7 @@
       [
         "expo-notifications",
         {
-          "icon": "./assets/images/scoop_bird.png",
+          "icon": "./assets/images/delivery.png",
           "color": "#ffffff"
         }
       ],

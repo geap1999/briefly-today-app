@@ -27,7 +27,7 @@ export default function CelebritiesCarousel({ celebrities, maxCelebCardHeight, s
       <View className="flex-row items-baseline justify-between mb-4 px-1">
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Image 
-            source={require('@/assets/images/baby_bird.png')}
+            source={require('@/assets/images/birthday.png')}
             style={{ width: imageSize, height: imageSize }}
             resizeMode="contain"
           />
