@@ -133,6 +133,9 @@ export default function HomeScreen() {
   useInterstitialAd(interstitial, setIsScoopRevealed, setAdLoaded, fetchDailyScoop);
   useCelebHeights(celebHeights, todayData.celebrities.length, setMaxCelebCardHeight);
 
+  // Padding to allow header to disappear only when scoop is revealed and loaded
+  const dynamicPaddingBottom = (isScoopRevealed && scoop && !loading) ? 180 : 40;
+
   const handleScoopPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     if (adLoaded) {
@@ -207,7 +210,7 @@ export default function HomeScreen() {
               contentContainerStyle={{ 
                 paddingHorizontal: horizontalPadding, 
                 paddingTop: 20, 
-                paddingBottom: 110,
+                paddingBottom: dynamicPaddingBottom,
                 alignItems: 'center',
               }}
               onScroll={scrollHandler}
@@ -229,7 +232,7 @@ export default function HomeScreen() {
                 <ScoopOfTheDay
                   currentTime={currentTime}
                   loading={loading}
-                  isScoopRevealed={true}
+                  isScoopRevealed={isScoopRevealed}
                   scoop={scoop}
                   onScoopPress={handleScoopPress}
                   onCardPress={handleCardPress}

@@ -7,16 +7,25 @@
 		"development": {
 			"developmentClient": true,
 			"distribution": "internal",
-      "env": { "EXPO_DEBUG": "true" },
+      "env": { 
+        "EXPO_DEBUG": "true",
+        "EXPO_PUBLIC_ENV": "development"
+      },
 			"android": {
 				"gradleCommand": ":app:assembleDebug -x lint -x lintVitalAnalyzeRelease"
 			}
 		},
 		"preview": {
-			"distribution": "internal"
+			"distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_ENV": "preview"
+      }
 		},
 		"production": {
 			"autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_ENV": "production"
+      },
 			"android": {
 				"buildType": "app-bundle",
 				"gradleCommand": ":app:bundleRelease -x lint -x lintVitalAnalyzeRelease"
@@ -24,6 +33,9 @@
 		},
 		"production-apk": {
 			"autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_ENV": "production"
+      },
 			"android": {
 				"buildType": "apk",
 				"gradleCommand": ":app:assembleRelease -x lint -x lintVitalAnalyzeRelease"
