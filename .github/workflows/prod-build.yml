@@ -69,15 +69,6 @@ jobs:
           echo "EAS CLI version:"
           eas --version
 
-      - name: 📱 Build Production APK
-        if: github.event.inputs.buildType == 'apk'
-        run: |
-          export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
-          export GRADLE_OPTS="-Xmx4096m -XX:MaxMetaspaceSize=512m -Dorg.gradle.jvmargs=-Xmx4096m"
-          eas build --platform android --profile production-apk --local --non-interactive --output=./app-prod.apk
-        env:
-          NODE_ENV: production
-
       - name: 📱 Build Production AAB
         if: github.event.inputs.buildType == 'aab'
         run: |
@@ -86,6 +77,7 @@ jobs:
           eas build --platform android --profile production --local --non-interactive --output=./app-prod.aab
         env:
           NODE_ENV: production
+          EXPO_PUBLIC_ENV: production
 
       - name: 📦 Upload production build
         uses: actions/upload-artifact@v4

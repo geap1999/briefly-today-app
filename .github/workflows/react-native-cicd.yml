@@ -80,15 +80,7 @@ jobs:
           eas build --platform android --profile development --local --non-interactive --output=./app-dev.apk
         env:
           NODE_ENV: development
-
-      - name: 📱 Build Production APK
-        if: github.event.inputs.buildType == 'prod-apk'
-        run: |
-          export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
-          export GRADLE_OPTS="-Xmx4096m -XX:MaxMetaspaceSize=512m -Dorg.gradle.jvmargs=-Xmx4096m"
-          eas build --platform android --profile production-apk --local --non-interactive --output=./app-prod.apk
-        env:
-          NODE_ENV: production
+          EXPO_PUBLIC_ENV: development
 
       - name: 📱 Build Production AAB
         if: github.event.inputs.buildType == 'prod-aab'
@@ -98,6 +90,7 @@ jobs:
           eas build --platform android --profile production --local --non-interactive --output=./app-prod.aab
         env:
           NODE_ENV: production
+          EXPO_PUBLIC_ENV: production
 
       - name: 📦 Upload build artifacts to GitHub
         uses: actions/upload-artifact@v4
