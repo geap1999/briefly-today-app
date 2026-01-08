@@ -1,15 +1,7 @@
-name: React Native CI/CD
+name: Development Build
 
 on:
   workflow_dispatch:
-    inputs:
-      buildType:
-        type: choice
-        description: "Build type to run"
-        options:
-          - dev
-          - prod-apk
-          - prod-aab
 
 env:
   EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
@@ -39,10 +31,8 @@ jobs:
       - name: 📦 Install dependencies
         run: npm ci
 
-
-  build-and-deploy:
+  build-dev:
     needs: test
-    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: 🏗 Checkout repository
@@ -72,8 +62,7 @@ jobs:
           echo "EAS CLI version:"
           eas --version
 
-      - name:  Build Development APK
-        if: github.event.inputs.buildType == 'dev'
+      - name: 📱 Build Development APK
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
           export GRADLE_OPTS="-Xmx4096m -XX:MaxMetaspaceSize=512m -Dorg.gradle.jvmargs=-Xmx4096m"
@@ -81,30 +70,9 @@ jobs:
         env:
           NODE_ENV: development
 
-      - name: 📱 Build Production APK
-        if: github.event.inputs.buildType == 'prod-apk'
-        run: |
-          export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
-          export GRADLE_OPTS="-Xmx4096m -XX:MaxMetaspaceSize=512m -Dorg.gradle.jvmargs=-Xmx4096m"
-          eas build --platform android --profile production-apk --local --non-interactive --output=./app-prod.apk
-        env:
-          NODE_ENV: production
-
-      - name: 📱 Build Production AAB
-        if: github.event.inputs.buildType == 'prod-aab'
-        run: |
-          export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
-          export GRADLE_OPTS="-Xmx4096m -XX:MaxMetaspaceSize=512m -Dorg.gradle.jvmargs=-Xmx4096m"
-          eas build --platform android --profile production --local --non-interactive --output=./app-prod.aab
-        env:
-          NODE_ENV: production
-
-      - name: 📦 Upload build artifacts to GitHub
+      - name: 📦 Upload development build
         uses: actions/upload-artifact@v4
         with:
-          name: app-builds
-          path: |
-            ./app-dev.apk
-            ./app-prod.apk
-            ./app-prod.aab
+          name: dev-build
+          path: ./app-dev.apk
           retention-days: 7

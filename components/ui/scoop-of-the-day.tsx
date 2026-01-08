@@ -110,7 +110,7 @@ export default function ScoopOfTheDay({ currentTime, loading, isScoopRevealed, s
         </Text>
       </View>
 
-      {!countdown.isPast7PM ? (
+      {countdown.isPast7PM ? (
         <TouchableOpacity activeOpacity={0.9} onPress={onScoopPress}>
           <View className="relative overflow-hidden rounded-[28px]">
             <LinearGradient colors={["#FFD580", "#FF9900", "#FF7300"]} className="px-8 py-14 items-center justify-center">

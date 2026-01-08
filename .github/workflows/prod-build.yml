@@ -1,4 +1,4 @@
-name: React Native CI/CD
+name: Production Build
 
 on:
   workflow_dispatch:
@@ -7,9 +7,8 @@ on:
         type: choice
         description: "Build type to run"
         options:
-          - dev
-          - prod-apk
-          - prod-aab
+          - apk
+          - aab
 
 env:
   EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
@@ -39,10 +38,8 @@ jobs:
       - name: 📦 Install dependencies
         run: npm ci
 
-
-  build-and-deploy:
+  build-prod:
     needs: test
-    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: 🏗 Checkout repository
@@ -72,17 +69,8 @@ jobs:
           echo "EAS CLI version:"
           eas --version
 
-      - name:  Build Development APK
-        if: github.event.inputs.buildType == 'dev'
-        run: |
-          export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
-          export GRADLE_OPTS="-Xmx4096m -XX:MaxMetaspaceSize=512m -Dorg.gradle.jvmargs=-Xmx4096m"
-          eas build --platform android --profile development --local --non-interactive --output=./app-dev.apk
-        env:
-          NODE_ENV: development
-
       - name: 📱 Build Production APK
-        if: github.event.inputs.buildType == 'prod-apk'
+        if: github.event.inputs.buildType == 'apk'
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
           export GRADLE_OPTS="-Xmx4096m -XX:MaxMetaspaceSize=512m -Dorg.gradle.jvmargs=-Xmx4096m"
@@ -91,7 +79,7 @@ jobs:
           NODE_ENV: production
 
       - name: 📱 Build Production AAB
-        if: github.event.inputs.buildType == 'prod-aab'
+        if: github.event.inputs.buildType == 'aab'
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
           export GRADLE_OPTS="-Xmx4096m -XX:MaxMetaspaceSize=512m -Dorg.gradle.jvmargs=-Xmx4096m"
@@ -99,12 +87,11 @@ jobs:
         env:
           NODE_ENV: production
 
-      - name: 📦 Upload build artifacts to GitHub
+      - name: 📦 Upload production build
         uses: actions/upload-artifact@v4
         with:
-          name: app-builds
+          name: prod-build
           path: |
-            ./app-dev.apk
             ./app-prod.apk
             ./app-prod.aab
           retention-days: 7
