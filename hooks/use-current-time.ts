@@ -11,7 +11,7 @@ export function useCurrentTime(setIsScoopRevealed: (v: boolean) => void) {
       const now = new Date();
       setCurrentTime(now);
 
-      const currentDate = now.toDateString();
+      const currentDate = now.toLocaleDateString('en-US', { timeZone: 'America/New_York' });
       if (currentDate !== lastCheckedDate) {
         lastCheckedDate = currentDate;
         const lastRevealedDate = await AsyncStorage.getItem('last_revealed_date');

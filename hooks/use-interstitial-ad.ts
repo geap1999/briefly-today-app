@@ -18,7 +18,7 @@ export function useInterstitialAd(
       setIsScoopRevealed(true);
       try {
         await fetchDailyScoop();
-        const today = new Date().toDateString();
+        const today = new Date().toLocaleDateString('en-US', { timeZone: 'America/New_York' });
         await AsyncStorage.setItem('last_revealed_date', today);
       } catch (e) {
         console.log('Storage error', e);

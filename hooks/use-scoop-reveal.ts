@@ -10,7 +10,7 @@ export function useScoopReveal(
     const checkStorage = async () => {
       try {
         const lastDate = await AsyncStorage.getItem('last_revealed_date');
-        const today = new Date().toDateString();
+        const today = new Date().toLocaleDateString('en-US', { timeZone: 'America/New_York' });
         await fetchDailyScoop();
 
         if (lastDate === today) {
