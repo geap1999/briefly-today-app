@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
-import { getDailyFacts } from '../services/supabase/daily-facts';
+import { useEffect, useState } from "react";
+import { getDailyFacts } from "../services/supabase/daily-facts";
+import { getMovableHoliday } from "../utils/utils";
 
 interface DataItem {
   category: string;
@@ -33,8 +34,8 @@ export function useDayData() {
   });
 
   const [dateInfo, setDateInfo] = useState<DateInfo>({
-    dayOfWeek: '',
-    formattedDate: '',
+    dayOfWeek: "",
+    formattedDate: "",
   });
 
   useEffect(() => {
@@ -42,38 +43,53 @@ export function useDayData() {
       const now = new Date();
       const month = now.getMonth() + 1;
       const day = now.getDate();
+      const year = now.getFullYear();
 
       const dayOfWeek = now
-        .toLocaleDateString('en-US', { weekday: 'long' })
+        .toLocaleDateString("en-US", { weekday: "long" })
         .toUpperCase();
 
-      const formattedDate = now.toLocaleDateString('en-US', {
-        month: '2-digit',
-        day: '2-digit',
-        year: 'numeric',
+      const formattedDate = now.toLocaleDateString("en-US", {
+        month: "2-digit",
+        day: "2-digit",
+        year: "numeric",
       });
 
       setDateInfo({ dayOfWeek, formattedDate });
 
       const data = await getDailyFacts(month, day);
-      
+
       if (data && data.length > 0) {
         const dayData = data[0];
         const items = dayData.payload.items || [];
 
         const celebrities = items.filter(
-          (item: DataItem) => item.category === 'Celeb'
+          (item: DataItem) => item.category === "Celeb"
         );
-        const history = items.filter((item: DataItem) => item.category === 'History');
-        const popCulture = items.filter((item: DataItem) => item.category === 'Pop Culture');
+        const history = items.filter(
+          (item: DataItem) => item.category === "History"
+        );
+        const popCulture = items.filter(
+          (item: DataItem) => item.category === "Pop Culture"
+        );
         const natureTech = items.filter(
-          (item: DataItem) => item.category === 'Nature & Tech'
+          (item: DataItem) => item.category === "Nature & Tech"
         );
 
         const saint = dayData.payload.saint || null;
-        const special = dayData.payload.special || undefined;
 
-        setTodayData({ saint, celebrities, history, popCulture, natureTech, special });
+        // Check for movable holiday first, fallback to database special
+        const movableHoliday = getMovableHoliday(month, day, year);
+        const special = movableHoliday || dayData.payload.special || undefined;
+
+        setTodayData({
+          saint,
+          celebrities,
+          history,
+          popCulture,
+          natureTech,
+          special,
+        });
       }
     };
 

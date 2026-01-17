@@ -1,7 +1,10 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect, useState } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState } from "react";
 
-export function useCurrentTime(setIsScoopRevealed: (v: boolean) => void) {
+export function useCurrentTime(
+  setIsScoopRevealed: (v: boolean) => void,
+  timezone = "America/Chicago"
+) {
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
 
   useEffect(() => {
@@ -11,10 +14,13 @@ export function useCurrentTime(setIsScoopRevealed: (v: boolean) => void) {
       const now = new Date();
       setCurrentTime(now);
 
-      const currentDate = now.toLocaleDateString('en-US', { timeZone: 'America/New_York' });
+      const currentDate = now.toLocaleDateString("en-US", {
+        timeZone: timezone,
+      });
       if (currentDate !== lastCheckedDate) {
         lastCheckedDate = currentDate;
-        const lastRevealedDate = await AsyncStorage.getItem('last_revealed_date');
+        const lastRevealedDate =
+          await AsyncStorage.getItem("last_revealed_date");
 
         if (lastRevealedDate !== currentDate) {
           setIsScoopRevealed(false);
@@ -23,7 +29,7 @@ export function useCurrentTime(setIsScoopRevealed: (v: boolean) => void) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [setIsScoopRevealed]);
+  }, [setIsScoopRevealed, timezone]);
 
   return currentTime;
 }

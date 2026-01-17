@@ -25,6 +25,7 @@ interface Props {
   scoop: any;
   onScoopPress: () => void;
   isDarkMode?: boolean;
+  timezone?: string;
 }
 
 export default function ScoopOfTheDay({
@@ -34,9 +35,10 @@ export default function ScoopOfTheDay({
   scoop,
   onScoopPress,
   isDarkMode = false,
+  timezone = "America/Chicago",
 }: Props) {
   const { isTablet } = useResponsive();
-  const countdown = getScoopCountdown(currentTime);
+  const countdown = getScoopCountdown(currentTime, timezone);
 
   const scoopyAnimationStyle = useAnimatedStyle(() => {
     return {
