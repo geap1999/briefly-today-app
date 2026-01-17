@@ -5,6 +5,7 @@ import HeroHeader from "@/components/ui/hero-header";
 import ScoopOfTheDay from "@/components/ui/scoop-of-the-day";
 import VerticalSection from "@/components/ui/vertical-section";
 import { useTheme } from "@/contexts/theme-context";
+import { useTimezone } from "@/contexts/timezone-context";
 import { getScoop } from "@/services/supabase/scoop";
 import {
   getFontSize,
@@ -113,6 +114,7 @@ interface HomeScreenProps {
 
 export default function HomeScreen({ onSettingsPress }: HomeScreenProps) {
   const { isDarkMode } = useTheme();
+  const { region, timezone } = useTimezone();
   const { todayData, dateInfo } = useDayData();
   const { isTablet } = useResponsive();
   const horizontalPadding = getHorizontalPadding();
@@ -145,18 +147,19 @@ export default function HomeScreen({ onSettingsPress }: HomeScreenProps) {
 
   const fetchDailyScoop = useCallback(async () => {
     setLoading(true);
-    const data = await getScoop();
+    const data = await getScoop(region);
     setScoop(data);
     setLoading(false);
-  }, []);
+  }, [region]);
 
-  useScoopReveal(setIsScoopRevealed, fetchDailyScoop);
-  const currentTime = useCurrentTime(setIsScoopRevealed);
+  useScoopReveal(setIsScoopRevealed, fetchDailyScoop, timezone);
+  const currentTime = useCurrentTime(setIsScoopRevealed, timezone);
   useInterstitialAd(
     interstitial,
     setIsScoopRevealed,
     setAdLoaded,
-    fetchDailyScoop
+    fetchDailyScoop,
+    timezone
   );
   useCelebHeights(
     celebHeights,
@@ -341,6 +344,7 @@ export default function HomeScreen({ onSettingsPress }: HomeScreenProps) {
                   loading={loading}
                   isScoopRevealed={isScoopRevealed}
                   scoop={scoop}
+                  timezone={timezone}
                   onScoopPress={handleScoopPress}
                   isDarkMode={isDarkMode}
                 />
