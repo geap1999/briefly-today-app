@@ -1,3 +1,4 @@
+import { useTheme } from "@/contexts/theme-context";
 import {
   getFontSize,
   getHorizontalPadding,
@@ -6,7 +7,6 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import { useState } from "react";
 import {
   Linking,
   ScrollView,
@@ -23,7 +23,7 @@ interface SettingsScreenProps {
 }
 
 export default function SettingsScreen({ onBack }: SettingsScreenProps) {
-  const [darkModeEnabled, setDarkModeEnabled] = useState(false);
+  const { isDarkMode, setThemeMode } = useTheme();
   const horizontalPadding = getHorizontalPadding();
   const maxContentWidth = getMaxContentWidth();
 
@@ -34,8 +34,7 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
 
   const handleDarkModeToggle = (value: boolean) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    setDarkModeEnabled(value);
-    // TODO: Implement dark mode functionality
+    setThemeMode(value ? "dark" : "light");
   };
 
   const handlePrivacyPolicyPress = () => {
@@ -62,7 +61,11 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
   return (
     <View className="flex-1">
       <LinearGradient
-        colors={["#E0F2FE", "#DBEAFE", "#E0E7FF"]}
+        colors={
+          isDarkMode
+            ? ["#1E293B", "#0F172A", "#020617"]
+            : ["#E0F2FE", "#DBEAFE", "#E0E7FF"]
+        }
         locations={[0, 0.5, 1]}
         className="absolute inset-0"
       />
@@ -93,13 +96,17 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
                 className="p-2 -ml-2"
                 activeOpacity={0.7}
               >
-                <Ionicons name="arrow-back" size={28} color="#3B82F6" />
+                <Ionicons
+                  name="arrow-back"
+                  size={28}
+                  color={isDarkMode ? "#93C5FD" : "#3B82F6"}
+                />
               </TouchableOpacity>
               <Text
                 className="font-black ml-2"
                 style={{
                   fontSize: getFontSize(32),
-                  color: "#3B82F6",
+                  color: isDarkMode ? "#93C5FD" : "#3B82F6",
                   letterSpacing: -0.5,
                 }}
               >
@@ -108,12 +115,22 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
             </View>
 
             {/* Settings Sections */}
-            <View className="bg-white/70 rounded-3xl overflow-hidden shadow-sm">
+            <View
+              className="rounded-3xl overflow-hidden shadow-sm"
+              style={{
+                backgroundColor: isDarkMode
+                  ? "rgba(30, 41, 59, 0.7)"
+                  : "rgba(255, 255, 255, 0.7)",
+              }}
+            >
               {/* Appearance Section */}
               <View className="px-6 py-5">
                 <Text
                   className="font-bold mb-4"
-                  style={{ fontSize: getFontSize(18), color: "#1E293B" }}
+                  style={{
+                    fontSize: getFontSize(18),
+                    color: isDarkMode ? "#F1F5F9" : "#1E293B",
+                  }}
                 >
                   Appearance
                 </Text>
@@ -122,35 +139,37 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
                   <View className="flex-1">
                     <Text
                       className="font-semibold"
-                      style={{ fontSize: getFontSize(16), color: "#334155" }}
+                      style={{
+                        fontSize: getFontSize(16),
+                        color: isDarkMode ? "#E2E8F0" : "#334155",
+                      }}
                     >
                       Dark Mode
                     </Text>
-                    <Text
-                      className="mt-1"
-                      style={{ fontSize: getFontSize(14), color: "#64748B" }}
-                    >
-                      Coming soon
-                    </Text>
                   </View>
                   <Switch
-                    value={darkModeEnabled}
+                    value={isDarkMode}
                     onValueChange={handleDarkModeToggle}
                     trackColor={{ false: "#CBD5E1", true: "#93C5FD" }}
-                    thumbColor={darkModeEnabled ? "#3B82F6" : "#F1F5F9"}
-                    disabled={true}
+                    thumbColor={isDarkMode ? "#3B82F6" : "#F1F5F9"}
                   />
                 </View>
               </View>
 
               {/* Divider */}
-              <View className="h-px bg-slate-200 mx-6" />
+              <View
+                className="h-px mx-6"
+                style={{ backgroundColor: isDarkMode ? "#334155" : "#E2E8F0" }}
+              />
 
               {/* Legal Section */}
               <View className="px-6 py-5">
                 <Text
                   className="font-bold mb-4"
-                  style={{ fontSize: getFontSize(18), color: "#1E293B" }}
+                  style={{
+                    fontSize: getFontSize(18),
+                    color: isDarkMode ? "#F1F5F9" : "#1E293B",
+                  }}
                 >
                   Legal
                 </Text>
@@ -162,11 +181,18 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
                 >
                   <Text
                     className="font-semibold"
-                    style={{ fontSize: getFontSize(16), color: "#334155" }}
+                    style={{
+                      fontSize: getFontSize(16),
+                      color: isDarkMode ? "#E2E8F0" : "#334155",
+                    }}
                   >
                     Privacy Policy
                   </Text>
-                  <Ionicons name="chevron-forward" size={20} color="#94A3B8" />
+                  <Ionicons
+                    name="chevron-forward"
+                    size={20}
+                    color={isDarkMode ? "#64748B" : "#94A3B8"}
+                  />
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -176,22 +202,35 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
                 >
                   <Text
                     className="font-semibold"
-                    style={{ fontSize: getFontSize(16), color: "#334155" }}
+                    style={{
+                      fontSize: getFontSize(16),
+                      color: isDarkMode ? "#E2E8F0" : "#334155",
+                    }}
                   >
                     Terms of Service
                   </Text>
-                  <Ionicons name="chevron-forward" size={20} color="#94A3B8" />
+                  <Ionicons
+                    name="chevron-forward"
+                    size={20}
+                    color={isDarkMode ? "#64748B" : "#94A3B8"}
+                  />
                 </TouchableOpacity>
               </View>
 
               {/* Divider */}
-              <View className="h-px bg-slate-200 mx-6" />
+              <View
+                className="h-px mx-6"
+                style={{ backgroundColor: isDarkMode ? "#334155" : "#E2E8F0" }}
+              />
 
               {/* About Section */}
               <View className="px-6 py-5">
                 <Text
                   className="font-bold mb-4"
-                  style={{ fontSize: getFontSize(18), color: "#1E293B" }}
+                  style={{
+                    fontSize: getFontSize(18),
+                    color: isDarkMode ? "#F1F5F9" : "#1E293B",
+                  }}
                 >
                   About
                 </Text>
@@ -199,11 +238,19 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
                 <View className="py-2">
                   <Text
                     className="font-semibold mb-1"
-                    style={{ fontSize: getFontSize(16), color: "#334155" }}
+                    style={{
+                      fontSize: getFontSize(16),
+                      color: isDarkMode ? "#E2E8F0" : "#334155",
+                    }}
                   >
                     Version
                   </Text>
-                  <Text style={{ fontSize: getFontSize(14), color: "#64748B" }}>
+                  <Text
+                    style={{
+                      fontSize: getFontSize(14),
+                      color: isDarkMode ? "#94A3B8" : "#64748B",
+                    }}
+                  >
                     1.1.0
                   </Text>
                 </View>
@@ -211,10 +258,20 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
             </View>
 
             {/* Contact Section */}
-            <View className="mt-6 bg-white/70 rounded-3xl overflow-hidden shadow-sm px-6 py-5">
+            <View
+              className="mt-6 rounded-3xl overflow-hidden shadow-sm px-6 py-5"
+              style={{
+                backgroundColor: isDarkMode
+                  ? "rgba(30, 41, 59, 0.7)"
+                  : "rgba(255, 255, 255, 0.7)",
+              }}
+            >
               <Text
                 className="text-center mb-3"
-                style={{ fontSize: getFontSize(15), color: "#334155" }}
+                style={{
+                  fontSize: getFontSize(15),
+                  color: isDarkMode ? "#E2E8F0" : "#334155",
+                }}
               >
                 Have any errors or suggestions?
               </Text>
@@ -243,7 +300,10 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
             <View className="mt-8 items-center">
               <Text
                 className="text-center"
-                style={{ fontSize: getFontSize(14), color: "#64748B" }}
+                style={{
+                  fontSize: getFontSize(14),
+                  color: isDarkMode ? "#94A3B8" : "#64748B",
+                }}
               >
                 Made with ❤️ for curious minds
               </Text>

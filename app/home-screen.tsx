@@ -4,6 +4,7 @@ import EmptyState from "@/components/ui/empty-state";
 import HeroHeader from "@/components/ui/hero-header";
 import ScoopOfTheDay from "@/components/ui/scoop-of-the-day";
 import VerticalSection from "@/components/ui/vertical-section";
+import { useTheme } from "@/contexts/theme-context";
 import { getScoop } from "@/services/supabase/scoop";
 import {
   getFontSize,
@@ -47,6 +48,7 @@ type Season = "winter" | "spring" | "summer" | "autumn";
 
 interface SeasonTheme {
   background: readonly [string, string, string];
+  backgroundDark: readonly [string, string, string];
   divider: string;
   accentColor: string;
   decorativeElements: {
@@ -65,6 +67,7 @@ const getSeason = (month: number): Season => {
 const seasonThemes: Record<Season, SeasonTheme> = {
   winter: {
     background: ["#E0F2FE", "#DBEAFE", "#E0E7FF"] as const, // Cool blues and icy tones
+    backgroundDark: ["#1E293B", "#0F172A", "#020617"] as const,
     divider: "rgba(147, 197, 253, 0.3)", // Light blue
     accentColor: "#3B82F6",
     decorativeElements: {
@@ -74,6 +77,7 @@ const seasonThemes: Record<Season, SeasonTheme> = {
   },
   spring: {
     background: ["#FEF3C7", "#FEF9C3", "#ECFCCB"] as const, // Warm yellows and fresh greens
+    backgroundDark: ["#1C1917", "#0C0A09", "#0A0A0A"] as const,
     divider: "rgba(167, 243, 208, 0.4)", // Light green
     accentColor: "#10B981",
     decorativeElements: {
@@ -83,6 +87,7 @@ const seasonThemes: Record<Season, SeasonTheme> = {
   },
   summer: {
     background: ["#FEF3C7", "#FED7AA", "#FECACA"] as const, // Warm oranges and yellows
+    backgroundDark: ["#292524", "#1C1917", "#18181B"] as const,
     divider: "rgba(253, 186, 116, 0.3)", // Light orange
     accentColor: "#F59E0B",
     decorativeElements: {
@@ -92,6 +97,7 @@ const seasonThemes: Record<Season, SeasonTheme> = {
   },
   autumn: {
     background: ["#FED7AA", "#FECACA", "#FBCFE8"] as const, // Browns, oranges, and warm pinks
+    backgroundDark: ["#27272A", "#18181B", "#0F0A0A"] as const,
     divider: "rgba(251, 146, 60, 0.3)", // Light orange-brown
     accentColor: "#EA580C",
     decorativeElements: {
@@ -106,6 +112,7 @@ interface HomeScreenProps {
 }
 
 export default function HomeScreen({ onSettingsPress }: HomeScreenProps) {
+  const { isDarkMode } = useTheme();
   const { todayData, dateInfo } = useDayData();
   const { isTablet } = useResponsive();
   const horizontalPadding = getHorizontalPadding();
@@ -169,11 +176,6 @@ export default function HomeScreen({ onSettingsPress }: HomeScreenProps) {
     }
   };
 
-  const handleCardPress = (url: string) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    openLink(url);
-  };
-
   const hasAnyContent = useMemo(() => {
     return (
       Boolean(todayData.saint) ||
@@ -196,7 +198,9 @@ export default function HomeScreen({ onSettingsPress }: HomeScreenProps) {
   return (
     <View className="flex-1">
       <LinearGradient
-        colors={seasonTheme.background}
+        colors={
+          isDarkMode ? seasonTheme.backgroundDark : seasonTheme.background
+        }
         locations={[0, 0.5, 1]}
         className="absolute inset-0"
       />
@@ -273,9 +277,12 @@ export default function HomeScreen({ onSettingsPress }: HomeScreenProps) {
                 <View className="items-end mb-3">
                   <TouchableOpacity
                     onPress={handleSettingsPress}
-                    className="bg-white/70 rounded-full p-3 shadow-sm"
+                    className="rounded-full p-3 shadow-sm"
                     activeOpacity={0.7}
                     style={{
+                      backgroundColor: isDarkMode
+                        ? "rgba(30, 41, 59, 0.7)"
+                        : "rgba(255, 255, 255, 0.7)",
                       shadowColor: "#000",
                       shadowOffset: { width: 0, height: 2 },
                       shadowOpacity: 0.1,
@@ -293,7 +300,14 @@ export default function HomeScreen({ onSettingsPress }: HomeScreenProps) {
 
                 {/* Swipe indicator at top */}
                 <View className="items-center mb-6">
-                  <View className="flex-row items-center gap-2 px-5 py-3 bg-white/50 rounded-full">
+                  <View
+                    className="flex-row items-center gap-2 px-5 py-3 rounded-full"
+                    style={{
+                      backgroundColor: isDarkMode
+                        ? "rgba(30, 41, 59, 0.5)"
+                        : "rgba(255, 255, 255, 0.5)",
+                    }}
+                  >
                     <Text
                       className="font-bold tracking-wider uppercase"
                       style={{
@@ -319,6 +333,7 @@ export default function HomeScreen({ onSettingsPress }: HomeScreenProps) {
                   dateInfo={dateInfo}
                   todayData={todayData}
                   scrollY={scrollY}
+                  isDarkMode={isDarkMode}
                 />
 
                 <ScoopOfTheDay
@@ -327,7 +342,7 @@ export default function HomeScreen({ onSettingsPress }: HomeScreenProps) {
                   isScoopRevealed={isScoopRevealed}
                   scoop={scoop}
                   onScoopPress={handleScoopPress}
-                  onCardPress={handleCardPress}
+                  isDarkMode={isDarkMode}
                 />
               </View>
             </Animated.ScrollView>
@@ -368,8 +383,12 @@ export default function HomeScreen({ onSettingsPress }: HomeScreenProps) {
                     On This Day
                   </Text>
                   <Text
-                    className="font-semibold text-slate-600 text-center mt-3"
-                    style={{ fontSize: getFontSize(16), letterSpacing: 0.5 }}
+                    className="font-semibold text-center mt-3"
+                    style={{
+                      fontSize: getFontSize(16),
+                      letterSpacing: 0.5,
+                      color: isDarkMode ? "#94A3B8" : "#475569",
+                    }}
                   >
                     Real events that happened on this date in history
                   </Text>
@@ -380,7 +399,7 @@ export default function HomeScreen({ onSettingsPress }: HomeScreenProps) {
                   celebrities={todayData.celebrities}
                   maxCelebCardHeight={maxCelebCardHeight}
                   setCelebHeights={setCelebHeights}
-                  onCardPress={handleCardPress}
+                  isDarkMode={isDarkMode}
                 />
 
                 {todayData.popCulture.length > 0 && <Divider />}
@@ -390,7 +409,7 @@ export default function HomeScreen({ onSettingsPress }: HomeScreenProps) {
                   imagePath={require("@/assets/images/pop.png")}
                   gradientColors={["#EC4899", "#DB2777"]}
                   accentColor="#EC4899"
-                  onCardPress={handleCardPress}
+                  isDarkMode={isDarkMode}
                 />
 
                 {todayData.history.length > 0 && <Divider />}
@@ -400,7 +419,7 @@ export default function HomeScreen({ onSettingsPress }: HomeScreenProps) {
                   imagePath={require("@/assets/images/history.png")}
                   gradientColors={["#3B82F6", "#1E40AF"]}
                   accentColor="#3B82F6"
-                  onCardPress={handleCardPress}
+                  isDarkMode={isDarkMode}
                 />
 
                 {todayData.natureTech.length > 0 && <Divider />}
@@ -410,10 +429,13 @@ export default function HomeScreen({ onSettingsPress }: HomeScreenProps) {
                   imagePath={require("@/assets/images/eureka.png")}
                   gradientColors={["#10B981", "#059669"]}
                   accentColor="#10B981"
-                  onCardPress={handleCardPress}
+                  isDarkMode={isDarkMode}
                 />
 
-                <EmptyState hasAnyContent={hasAnyContent} />
+                <EmptyState
+                  hasAnyContent={hasAnyContent}
+                  isDarkMode={isDarkMode}
+                />
 
                 <View className="pt-6 items-center">
                   <View
