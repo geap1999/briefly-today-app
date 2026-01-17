@@ -8,14 +8,15 @@ export function useInterstitialAd(
   setIsScoopRevealed: (v: boolean) => void,
   setAdLoaded: (v: boolean) => void,
   fetchDailyScoop: () => Promise<void>,
-  timezone = "America/Chicago"
+  timezone = "America/Chicago",
+  onAdClosed?: () => void,
 ) {
   useEffect(() => {
     const unsubscribeLoaded = interstitial.addAdEventListener(
       AdEventType.LOADED,
       () => {
         setAdLoaded(true);
-      }
+      },
     );
 
     const unsubscribeClosed = interstitial.addAdEventListener(
@@ -32,13 +33,18 @@ export function useInterstitialAd(
           console.log("Storage error", e);
           Alert.alert(
             "Error",
-            "An error occurred. Please try refreshing the app."
+            "An error occurred. Please try refreshing the app.",
           );
         }
 
         setAdLoaded(false);
         interstitial.load();
-      }
+
+        // Trigger scroll after ad is closed
+        if (onAdClosed) {
+          setTimeout(() => onAdClosed(), 300);
+        }
+      },
     );
 
     interstitial.load();
@@ -53,6 +59,7 @@ export function useInterstitialAd(
     setAdLoaded,
     fetchDailyScoop,
     timezone,
+    onAdClosed,
   ]);
 }
 

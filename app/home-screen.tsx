@@ -16,8 +16,8 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import { useCallback, useMemo, useState } from "react";
-import { Linking, Text, TouchableOpacity, View } from "react-native";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 import { InterstitialAd } from "react-native-google-mobile-ads";
 import PagerView from "react-native-pager-view";
 import Animated, {
@@ -110,9 +110,13 @@ const seasonThemes: Record<Season, SeasonTheme> = {
 
 interface HomeScreenProps {
   onSettingsPress: () => void;
+  onDataLoaded?: () => void;
 }
 
-export default function HomeScreen({ onSettingsPress }: HomeScreenProps) {
+export default function HomeScreen({
+  onSettingsPress,
+  onDataLoaded,
+}: HomeScreenProps) {
   const { isDarkMode } = useTheme();
   const { region, timezone } = useTimezone();
   const { todayData, dateInfo } = useDayData();
@@ -131,6 +135,7 @@ export default function HomeScreen({ onSettingsPress }: HomeScreenProps) {
   const seasonTheme = seasonThemes[currentSeason];
 
   const scrollY = useSharedValue(0);
+  const scrollViewRef = useRef<Animated.ScrollView>(null);
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -154,18 +159,31 @@ export default function HomeScreen({ onSettingsPress }: HomeScreenProps) {
 
   useScoopReveal(setIsScoopRevealed, fetchDailyScoop, timezone);
   const currentTime = useCurrentTime(setIsScoopRevealed, timezone);
+
+  const scrollToScoop = useCallback(() => {
+    scrollViewRef.current?.scrollTo({ y: 400, animated: true });
+  }, []);
+
   useInterstitialAd(
     interstitial,
     setIsScoopRevealed,
     setAdLoaded,
     fetchDailyScoop,
-    timezone
+    timezone,
+    scrollToScoop,
   );
   useCelebHeights(
     celebHeights,
     todayData.celebrities.length,
-    setMaxCelebCardHeight
+    setMaxCelebCardHeight,
   );
+
+  // Signal when initial data is loaded
+  useEffect(() => {
+    if (!loading && dateInfo.dayOfWeek && onDataLoaded) {
+      onDataLoaded();
+    }
+  }, [loading, dateInfo.dayOfWeek, onDataLoaded]);
 
   // Padding to allow header to disappear only when scoop is revealed and loaded
   const dynamicPaddingBottom = isScoopRevealed && scoop && !loading ? 180 : 40;
@@ -176,6 +194,8 @@ export default function HomeScreen({ onSettingsPress }: HomeScreenProps) {
       interstitial.show();
     } else {
       setIsScoopRevealed(true);
+      // Scroll when revealing without ad
+      setTimeout(() => scrollToScoop(), 300);
     }
   };
 
@@ -188,10 +208,6 @@ export default function HomeScreen({ onSettingsPress }: HomeScreenProps) {
       todayData.natureTech.length > 0
     );
   }, [todayData]);
-
-  const openLink = (url: string) => {
-    Linking.openURL(url);
-  };
 
   const handleSettingsPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -257,6 +273,7 @@ export default function HomeScreen({ onSettingsPress }: HomeScreenProps) {
         <PagerView style={{ flex: 1 }} initialPage={0}>
           <View key="1" style={{ flex: 1 }}>
             <Animated.ScrollView
+              ref={scrollViewRef}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{
                 paddingHorizontal: horizontalPadding,

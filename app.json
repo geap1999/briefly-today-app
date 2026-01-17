@@ -8,20 +8,13 @@
     "scheme": "today",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/images/icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.geap.brieflytoday"
     },
     "android": {
       "package": "com.geap.brieflytoday",
-      "permissions": [
-        "NOTIFICATIONS"
-      ],
+      "permissions": ["NOTIFICATIONS"],
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
@@ -52,6 +45,15 @@
         "expo-web-browser",
         {
           "experimentalLauncherActivity": true
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-screen-icon.png",
+          "imageWidth": 250,
+          "resizeMode": "native",
+          "backgroundColor": "#E6F4FE"
         }
       ]
     ],
