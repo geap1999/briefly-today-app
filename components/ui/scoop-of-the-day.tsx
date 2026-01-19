@@ -232,10 +232,10 @@ export default function ScoopOfTheDay({
                 <Image
                   source={require("@/assets/images/delivered.png")}
                   style={{
-                    width: 40,
-                    height: 40,
+                    width: 60,
+                    height: 60,
                     marginBottom: 4,
-                    marginTop: -12,
+                    marginTop: -30,
                   }}
                   resizeMode="contain"
                 />
@@ -259,7 +259,7 @@ export default function ScoopOfTheDay({
               <Animated.Image
                 source={require("@/assets/images/delivery.png")}
                 style={[
-                  { width: 40, height: 40, marginBottom: 4, marginTop: -24 },
+                  { width: 60, height: 60, marginBottom: 3, marginTop: -30 },
                   scoopyAnimationStyle,
                 ]}
                 resizeMode="contain"
