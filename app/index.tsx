@@ -5,6 +5,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import HomeScreen from "./home-screen";
+import LikedContentScreen from "./liked-content";
 import SettingsScreen from "./settings-screen";
 
 // Keep the splash screen visible while we fetch resources
@@ -12,6 +13,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [showSettings, setShowSettings] = useState(false);
+  const [showLikedContent, setShowLikedContent] = useState(false);
   const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
@@ -32,6 +34,7 @@ export default function App() {
             <ConsentHandler>
               <HomeScreen
                 onSettingsPress={() => setShowSettings(true)}
+                onLikedContentPress={() => setShowLikedContent(true)}
                 onDataLoaded={() => setAppIsReady(true)}
               />
             </ConsentHandler>
@@ -48,9 +51,12 @@ export default function App() {
           <ConsentHandler>
             {showSettings ? (
               <SettingsScreen onBack={() => setShowSettings(false)} />
+            ) : showLikedContent ? (
+              <LikedContentScreen onBack={() => setShowLikedContent(false)} />
             ) : (
               <HomeScreen
                 onSettingsPress={() => setShowSettings(true)}
+                onLikedContentPress={() => setShowLikedContent(true)}
                 onDataLoaded={() => setAppIsReady(true)}
               />
             )}

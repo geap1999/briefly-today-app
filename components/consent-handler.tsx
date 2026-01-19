@@ -87,7 +87,6 @@ export default function ConsentHandler({ children }: ConsentHandlerProps) {
         }
 
         if (finalStatus !== "granted") {
-          console.log("Notification permissions not granted");
           return;
         }
 

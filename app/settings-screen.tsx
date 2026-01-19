@@ -90,7 +90,7 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
             }}
           >
             {/* Header with Back Button */}
-            <View className="flex-row items-center mb-8">
+            <View className="flex-row items-center mb-16">
               <TouchableOpacity
                 onPress={handleBackPress}
                 className="p-2 -ml-2"
@@ -251,7 +251,7 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
                       color: isDarkMode ? "#94A3B8" : "#64748B",
                     }}
                   >
-                    1.2.2
+                    1.3.0
                   </Text>
                 </View>
               </View>
@@ -305,7 +305,7 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
                   color: isDarkMode ? "#94A3B8" : "#64748B",
                 }}
               >
-                Made with ❤️ for curious minds
+                Made for those who come after
               </Text>
             </View>
           </View>

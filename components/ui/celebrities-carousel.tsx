@@ -1,9 +1,19 @@
+import {
+  getLikedFactsCountByCategory,
+  isFactLiked,
+  likeFact,
+  MAX_LIKES_PER_CATEGORY,
+  unlikeFact,
+} from "@/utils/liked-facts";
 import { getFontSize, moderateScale, useResponsive } from "@/utils/responsive";
 import { handleOpenArticle } from "@/utils/utils";
+import { Ionicons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Animated, { SlideInRight } from "react-native-reanimated";
+import WarningModal from "./warning-modal";
 
 interface Props {
   celebrities: any[];
@@ -19,6 +29,51 @@ export default function CelebritiesCarousel({
   isDarkMode = false,
 }: Props) {
   const { width, isTablet } = useResponsive();
+  const [likedFacts, setLikedFacts] = useState<Set<string>>(new Set());
+  const [showWarningModal, setShowWarningModal] = useState(false);
+
+  useEffect(() => {
+    const loadLikedStatus = async () => {
+      const liked = new Set<string>();
+      for (const celeb of celebrities) {
+        const isLiked = await isFactLiked(celeb.title);
+        if (isLiked) {
+          liked.add(celeb.title);
+        }
+      }
+      setLikedFacts(liked);
+    };
+    loadLikedStatus();
+  }, [celebrities]);
+
+  const handleLike = async (item: any, e: any) => {
+    e.stopPropagation();
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    const isLiked = likedFacts.has(item.title);
+
+    try {
+      if (isLiked) {
+        await unlikeFact(item.title);
+        setLikedFacts((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(item.title);
+          return newSet;
+        });
+      } else {
+        // Check category limit before liking
+        const categoryCount = await getLikedFactsCountByCategory("Celeb");
+        if (categoryCount >= MAX_LIKES_PER_CATEGORY) {
+          setShowWarningModal(true);
+          return;
+        }
+        await likeFact(item.title, item.content, item.wikipedia_url, "Celeb");
+        setLikedFacts((prev) => new Set([...prev, item.title]));
+      }
+    } catch (error) {
+      console.error("Error toggling like:", error);
+    }
+  };
 
   if (!celebrities || celebrities.length === 0) return null;
 
@@ -32,6 +87,12 @@ export default function CelebritiesCarousel({
 
   return (
     <Animated.View entering={SlideInRight.duration(600)} className="my-6">
+      <WarningModal
+        visible={showWarningModal}
+        onClose={() => setShowWarningModal(false)}
+        category="Birthdays"
+        isDarkMode={isDarkMode}
+      />
       <View className="flex-row items-baseline justify-between mb-4 px-1">
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Image
@@ -140,21 +201,42 @@ export default function CelebritiesCarousel({
                   >
                     {item.content}
                   </Text>
-                  <View className="flex-row items-center gap-2">
-                    <View
+                  <View className="flex-row items-center justify-between">
+                    <View className="flex-row items-center gap-2">
+                      <View
+                        style={{
+                          width: isTablet ? 6 : 4,
+                          height: isTablet ? 6 : 4,
+                          borderRadius: 9999,
+                          backgroundColor: "white",
+                        }}
+                      />
+                      <Text
+                        className="font-semibold text-white"
+                        style={{ fontSize: getFontSize(14) }}
+                      >
+                        Learn more
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      onPress={(e) => handleLike(item, e)}
+                      activeOpacity={0.7}
                       style={{
-                        width: isTablet ? 6 : 4,
-                        height: isTablet ? 6 : 4,
-                        borderRadius: 9999,
-                        backgroundColor: "white",
+                        padding: isTablet ? 8 : 6,
                       }}
-                    />
-                    <Text
-                      className="font-semibold text-white"
-                      style={{ fontSize: getFontSize(14) }}
                     >
-                      Learn more
-                    </Text>
+                      <Ionicons
+                        name={
+                          likedFacts.has(item.title) ? "heart" : "heart-outline"
+                        }
+                        size={isTablet ? 28 : 24}
+                        color={
+                          likedFacts.has(item.title)
+                            ? "#EF4444"
+                            : "rgba(255, 255, 255, 0.7)"
+                        }
+                      />
+                    </TouchableOpacity>
                   </View>
                 </View>
               </LinearGradient>

@@ -1,8 +1,18 @@
+import {
+  getLikedFactsCountByCategory,
+  isFactLiked,
+  likeFact,
+  MAX_LIKES_PER_CATEGORY,
+  unlikeFact,
+} from "@/utils/liked-facts";
 import { getFontSize, moderateScale, useResponsive } from "@/utils/responsive";
 import { handleOpenArticle } from "@/utils/utils";
-import React from "react";
+import { Ionicons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
+import React, { useEffect, useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import Animated, { FadeInUp } from "react-native-reanimated";
+import WarningModal from "./warning-modal";
 
 interface Props {
   title: string;
@@ -10,6 +20,7 @@ interface Props {
   imagePath: any;
   gradientColors: string[];
   accentColor: string;
+  category: string;
   isDarkMode?: boolean;
 }
 
@@ -19,9 +30,55 @@ export default function VerticalSection({
   imagePath,
   gradientColors,
   accentColor,
+  category,
   isDarkMode = false,
 }: Props) {
   const { isTablet } = useResponsive();
+  const [likedFacts, setLikedFacts] = useState<Set<string>>(new Set());
+  const [showWarningModal, setShowWarningModal] = useState(false);
+
+  useEffect(() => {
+    const loadLikedStatus = async () => {
+      const liked = new Set<string>();
+      for (const item of items) {
+        const isLiked = await isFactLiked(item.title);
+        if (isLiked) {
+          liked.add(item.title);
+        }
+      }
+      setLikedFacts(liked);
+    };
+    loadLikedStatus();
+  }, [items]);
+
+  const handleLike = async (item: any, e: any) => {
+    e.stopPropagation();
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    const isLiked = likedFacts.has(item.title);
+
+    try {
+      if (isLiked) {
+        await unlikeFact(item.title);
+        setLikedFacts((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(item.title);
+          return newSet;
+        });
+      } else {
+        // Check category limit before liking
+        const categoryCount = await getLikedFactsCountByCategory(category);
+        if (categoryCount >= MAX_LIKES_PER_CATEGORY) {
+          setShowWarningModal(true);
+          return;
+        }
+        await likeFact(item.title, item.content, item.wikipedia_url, category);
+        setLikedFacts((prev) => new Set([...prev, item.title]));
+      }
+    } catch (error) {
+      console.error("Error toggling like:", error);
+    }
+  };
 
   if (!items || items.length === 0) return null;
 
@@ -37,6 +94,12 @@ export default function VerticalSection({
       entering={FadeInUp.duration(500).delay(200)}
       className="my-6"
     >
+      <WarningModal
+        visible={showWarningModal}
+        onClose={() => setShowWarningModal(false)}
+        category={title}
+        isDarkMode={isDarkMode}
+      />
       <View className="mb-4 px-1">
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Image
@@ -116,21 +179,47 @@ export default function VerticalSection({
                   >
                     {item.content}
                   </Text>
-                  <View className="flex-row items-center gap-2">
-                    <View
-                      className="rounded-full"
+                  <View className="flex-row items-center justify-between">
+                    <View className="flex-row items-center gap-2">
+                      <View
+                        className="rounded-full"
+                        style={{
+                          width: isTablet ? 6 : 4,
+                          height: isTablet ? 6 : 4,
+                          backgroundColor: accentColor,
+                        }}
+                      />
+                      <Text
+                        className="font-bold tracking-wide"
+                        style={{
+                          fontSize: contentFontSize,
+                          color: accentColor,
+                        }}
+                      >
+                        Learn more
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      onPress={(e) => handleLike(item, e)}
+                      activeOpacity={0.7}
                       style={{
-                        width: isTablet ? 6 : 4,
-                        height: isTablet ? 6 : 4,
-                        backgroundColor: accentColor,
+                        padding: isTablet ? 8 : 6,
                       }}
-                    />
-                    <Text
-                      className="font-bold tracking-wide"
-                      style={{ fontSize: contentFontSize, color: accentColor }}
                     >
-                      Learn more
-                    </Text>
+                      <Ionicons
+                        name={
+                          likedFacts.has(item.title) ? "heart" : "heart-outline"
+                        }
+                        size={isTablet ? 28 : 24}
+                        color={
+                          likedFacts.has(item.title)
+                            ? "#EF4444"
+                            : isDarkMode
+                              ? "#94A3B8"
+                              : "#64748B"
+                        }
+                      />
+                    </TouchableOpacity>
                   </View>
                 </View>
               </View>

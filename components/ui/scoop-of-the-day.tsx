@@ -1,7 +1,16 @@
+import {
+  getLikedFactsCountByCategory,
+  isFactLiked,
+  likeFact,
+  MAX_LIKES_PER_CATEGORY,
+  unlikeFact,
+} from "@/utils/liked-facts";
 import { getFontSize, moderateScale, useResponsive } from "@/utils/responsive";
 import { getScoopCountdown, handleOpenArticle } from "@/utils/utils";
+import { Ionicons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -17,6 +26,7 @@ import Animated, {
   withSequence,
   withTiming,
 } from "react-native-reanimated";
+import WarningModal from "./warning-modal";
 
 interface Props {
   currentTime: any;
@@ -39,6 +49,43 @@ export default function ScoopOfTheDay({
 }: Props) {
   const { isTablet } = useResponsive();
   const countdown = getScoopCountdown(currentTime, timezone);
+  const [isLiked, setIsLiked] = useState(false);
+  const [showWarningModal, setShowWarningModal] = useState(false);
+
+  useEffect(() => {
+    const checkLikedStatus = async () => {
+      if (scoop && scoop.title) {
+        const liked = await isFactLiked(scoop.title);
+        setIsLiked(liked);
+      }
+    };
+    checkLikedStatus();
+  }, [scoop]);
+
+  const handleLike = async (e: any) => {
+    e.stopPropagation();
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    if (!scoop) return;
+
+    try {
+      if (isLiked) {
+        await unlikeFact(scoop.title);
+        setIsLiked(false);
+      } else {
+        // Check category limit before liking
+        const categoryCount = await getLikedFactsCountByCategory("Scoop");
+        if (categoryCount >= MAX_LIKES_PER_CATEGORY) {
+          setShowWarningModal(true);
+          return;
+        }
+        await likeFact(scoop.title, scoop.content, scoop.url, "Scoop");
+        setIsLiked(true);
+      }
+    } catch (error) {
+      console.error("Error toggling like:", error);
+    }
+  };
 
   const scoopyAnimationStyle = useAnimatedStyle(() => {
     return {
@@ -47,10 +94,10 @@ export default function ScoopOfTheDay({
           translateY: withRepeat(
             withSequence(
               withTiming(-5, { duration: 1500 }),
-              withTiming(0, { duration: 1500 })
+              withTiming(0, { duration: 1500 }),
             ),
             -1,
-            true
+            true,
           ),
         },
       ],
@@ -73,6 +120,12 @@ export default function ScoopOfTheDay({
   if (isScoopRevealed && scoop) {
     return (
       <Animated.View entering={FadeIn.duration(400)} className="my-4">
+        <WarningModal
+          visible={showWarningModal}
+          onClose={() => setShowWarningModal(false)}
+          category="Scoops"
+          isDarkMode={isDarkMode}
+        />
         <TouchableOpacity
           activeOpacity={0.95}
           onPress={() => handleOpenArticle(scoop.url, "#3B82F6")}
@@ -102,25 +155,21 @@ export default function ScoopOfTheDay({
                     Today&apos;s Scoop
                   </Text>
                 </View>
-                <View
+                <TouchableOpacity
+                  onPress={handleLike}
+                  activeOpacity={0.7}
                   style={{
-                    paddingHorizontal: isTablet ? 14 : 10,
-                    paddingVertical: isTablet ? 6 : 5,
-                    backgroundColor: isDarkMode ? "#581C87" : "#F3E8FF",
-                    borderRadius: 9999,
+                    padding: isTablet ? 8 : 6,
                   }}
                 >
-                  <Text
-                    className="font-bold uppercase"
-                    style={{
-                      fontSize: getFontSize(9),
-                      letterSpacing: 1,
-                      color: isDarkMode ? "#E9D5FF" : "#6B21A8",
-                    }}
-                  >
-                    {scoop.category}
-                  </Text>
-                </View>
+                  <Ionicons
+                    name={isLiked ? "heart" : "heart-outline"}
+                    size={isTablet ? 28 : 24}
+                    color={
+                      isLiked ? "#EF4444" : isDarkMode ? "#94A3B8" : "#64748B"
+                    }
+                  />
+                </TouchableOpacity>
               </View>
 
               {scoop.image_url && (
@@ -154,6 +203,28 @@ export default function ScoopOfTheDay({
               >
                 {scoop.content}
               </Text>
+
+              <View
+                style={{
+                  paddingHorizontal: isTablet ? 14 : 10,
+                  paddingVertical: isTablet ? 6 : 5,
+                  backgroundColor: isDarkMode ? "#581C87" : "#F3E8FF",
+                  borderRadius: 9999,
+                  alignSelf: "flex-start",
+                  marginBottom: 12,
+                }}
+              >
+                <Text
+                  className="font-bold uppercase"
+                  style={{
+                    fontSize: getFontSize(9),
+                    letterSpacing: 1,
+                    color: isDarkMode ? "#E9D5FF" : "#6B21A8",
+                  }}
+                >
+                  {scoop.category}
+                </Text>
+              </View>
 
               <View
                 className="flex-row items-center justify-between pt-2.5"
@@ -267,7 +338,10 @@ export default function ScoopOfTheDay({
               <Text className="text-sm font-semibold text-purple-700 uppercase tracking-[2px] mb-6">
                 Unlocks at 7:00 PM ET
               </Text>
-              <View className="flex-row items-center gap-3">
+              <View
+                className="flex-row items-center gap-3"
+                style={{ marginBottom: -9 }}
+              >
                 <View className="items-center px-4 py-3 bg-white/60 rounded-2xl min-w-[72px]">
                   <Text className="text-4xl font-black text-purple-900">
                     {String(countdown.hours).padStart(2, "0")}

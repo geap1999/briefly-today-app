@@ -132,7 +132,7 @@ export default function HeroHeader({
                 <Text
                   className="font-bold text-yellow-300 text-center"
                   style={{
-                    fontSize: getFontSize(22),
+                    fontSize: getFontSize(20),
                     textShadowColor: "rgba(0,0,0,0.3)",
                     textShadowOffset: { width: 0, height: 2 },
                     textShadowRadius: 8,

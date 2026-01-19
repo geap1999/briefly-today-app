@@ -110,11 +110,13 @@ const seasonThemes: Record<Season, SeasonTheme> = {
 
 interface HomeScreenProps {
   onSettingsPress: () => void;
+  onLikedContentPress: () => void;
   onDataLoaded?: () => void;
 }
 
 export default function HomeScreen({
   onSettingsPress,
+  onLikedContentPress,
   onDataLoaded,
 }: HomeScreenProps) {
   const { isDarkMode } = useTheme();
@@ -194,7 +196,6 @@ export default function HomeScreen({
       interstitial.show();
     } else {
       setIsScoopRevealed(true);
-      // Scroll when revealing without ad
       setTimeout(() => scrollToScoop(), 300);
     }
   };
@@ -212,6 +213,11 @@ export default function HomeScreen({
   const handleSettingsPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onSettingsPress();
+  };
+
+  const handleLikedContentPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onLikedContentPress();
   };
 
   return (
@@ -293,8 +299,25 @@ export default function HomeScreen({
                       : undefined,
                 }}
               >
-                {/* Settings Icon */}
-                <View className="items-end mb-3">
+                {/* Heart and Settings Icons */}
+                <View className="flex-row items-center justify-end gap-3 mb-3">
+                  <TouchableOpacity
+                    onPress={handleLikedContentPress}
+                    className="rounded-full p-3 shadow-sm"
+                    activeOpacity={0.7}
+                    style={{
+                      backgroundColor: isDarkMode
+                        ? "rgba(30, 41, 59, 0.7)"
+                        : "rgba(255, 255, 255, 0.7)",
+                      shadowColor: "#000",
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.1,
+                      shadowRadius: 4,
+                      elevation: 3,
+                    }}
+                  >
+                    <Ionicons name="heart" size={24} color="#EF4444" />
+                  </TouchableOpacity>
                   <TouchableOpacity
                     onPress={handleSettingsPress}
                     className="rounded-full p-3 shadow-sm"
@@ -430,6 +453,7 @@ export default function HomeScreen({
                   imagePath={require("@/assets/images/pop.png")}
                   gradientColors={["#EC4899", "#DB2777"]}
                   accentColor="#EC4899"
+                  category="Pop Culture"
                   isDarkMode={isDarkMode}
                 />
 
@@ -440,6 +464,7 @@ export default function HomeScreen({
                   imagePath={require("@/assets/images/history.png")}
                   gradientColors={["#3B82F6", "#1E40AF"]}
                   accentColor="#3B82F6"
+                  category="History"
                   isDarkMode={isDarkMode}
                 />
 
@@ -450,6 +475,7 @@ export default function HomeScreen({
                   imagePath={require("@/assets/images/eureka.png")}
                   gradientColors={["#10B981", "#059669"]}
                   accentColor="#10B981"
+                  category="Nature & Tech"
                   isDarkMode={isDarkMode}
                 />
 

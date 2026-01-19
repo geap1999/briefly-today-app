@@ -45,9 +45,7 @@ const EUROPEAN_TIMEZONES = [
 const detectRegion = (): Region => {
   try {
     const deviceTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    console.log("Detected device timezone:", deviceTimezone);
 
-    // Check if timezone starts with Europe/
     if (
       EUROPEAN_TIMEZONES.some((tz) => deviceTimezone.includes(tz)) ||
       deviceTimezone.startsWith("Europe/")
