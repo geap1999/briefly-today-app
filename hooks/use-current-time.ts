@@ -1,22 +1,21 @@
+import { getTimezoneDateString } from "@/utils/timezone-date";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 
 export function useCurrentTime(
   setIsScoopRevealed: (v: boolean) => void,
-  timezone = "America/Chicago"
+  timezone = "America/Chicago",
 ) {
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
 
   useEffect(() => {
-    let lastCheckedDate = new Date().toDateString();
+    let lastCheckedDate = getTimezoneDateString(timezone);
 
     const timer = setInterval(async () => {
       const now = new Date();
       setCurrentTime(now);
 
-      const currentDate = now.toLocaleDateString("en-US", {
-        timeZone: timezone,
-      });
+      const currentDate = getTimezoneDateString(timezone);
       if (currentDate !== lastCheckedDate) {
         lastCheckedDate = currentDate;
         const lastRevealedDate =

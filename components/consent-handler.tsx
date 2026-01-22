@@ -7,11 +7,17 @@ import Constants from "expo-constants";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Platform, Text, View } from "react-native";
+import { Platform, Text, View } from "react-native";
 import mobileAds, {
   AdsConsent,
   AdsConsentStatus,
 } from "react-native-google-mobile-ads";
+import Animated, {
+  useAnimatedStyle,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 
 interface ConsentHandlerProps {
   children: React.ReactNode;
@@ -21,6 +27,23 @@ export default function ConsentHandler({ children }: ConsentHandlerProps) {
   const { region, isLoading: isTimezoneLoading } = useTimezone();
   const [canStartApp, setCanStartApp] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const floatAnimation = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateY: withRepeat(
+            withSequence(
+              withTiming(-5, { duration: 1500 }),
+              withTiming(0, { duration: 1500 }),
+            ),
+            -1,
+            true,
+          ),
+        },
+      ],
+    };
+  });
 
   useEffect(() => {
     async function setupPrivacyAndAds() {
@@ -143,7 +166,11 @@ export default function ConsentHandler({ children }: ConsentHandlerProps) {
   if (!canStartApp) {
     return (
       <View className="flex-1 items-center justify-center bg-white">
-        <ActivityIndicator size="large" color="#3B82F6" />
+        <Animated.Image
+          source={require("@/assets/images/delivery.png")}
+          style={[{ width: 80, height: 80 }, floatAnimation]}
+          resizeMode="contain"
+        />
         <Text className="mt-4 text-gray-600 font-semibold">Loading...</Text>
         {error && (
           <Text className="mt-2 text-red-500 text-xs px-4 text-center">

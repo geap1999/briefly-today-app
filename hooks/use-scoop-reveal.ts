@@ -1,3 +1,4 @@
+import { getTimezoneDateString } from "@/utils/timezone-date";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react";
 import { Alert } from "react-native";
@@ -5,15 +6,13 @@ import { Alert } from "react-native";
 export function useScoopReveal(
   setIsScoopRevealed: (v: boolean) => void,
   fetchDailyScoop: () => Promise<void>,
-  timezone = "America/Chicago"
+  timezone = "America/Chicago",
 ) {
   useEffect(() => {
     const checkStorage = async () => {
       try {
         const lastDate = await AsyncStorage.getItem("last_revealed_date");
-        const today = new Date().toLocaleDateString("en-US", {
-          timeZone: timezone,
-        });
+        const today = getTimezoneDateString(timezone);
         await fetchDailyScoop();
 
         if (lastDate === today) {

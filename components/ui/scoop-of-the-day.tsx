@@ -12,7 +12,6 @@ import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
   Image,
   Text,
   TouchableOpacity,
@@ -30,7 +29,6 @@ import WarningModal from "./warning-modal";
 
 interface Props {
   currentTime: any;
-  loading: boolean;
   isScoopRevealed: boolean;
   scoop: any;
   onScoopPress: () => void;
@@ -40,7 +38,6 @@ interface Props {
 
 export default function ScoopOfTheDay({
   currentTime,
-  loading,
   isScoopRevealed,
   scoop,
   onScoopPress,
@@ -73,7 +70,6 @@ export default function ScoopOfTheDay({
         await unlikeFact(scoop.title);
         setIsLiked(false);
       } else {
-        // Check category limit before liking
         const categoryCount = await getLikedFactsCountByCategory("Scoop");
         if (categoryCount >= MAX_LIKES_PER_CATEGORY) {
           setShowWarningModal(true);
@@ -108,14 +104,6 @@ export default function ScoopOfTheDay({
   const padding = isTablet ? moderateScale(24) : moderateScale(18);
   const imageSize = isTablet ? 60 : 45;
   const imageHeight = isTablet ? moderateScale(240) : moderateScale(180);
-
-  if (loading && isScoopRevealed) {
-    return (
-      <View className="items-center py-12 my-6">
-        <ActivityIndicator size="large" color="#A855F7" />
-      </View>
-    );
-  }
 
   if (isScoopRevealed && scoop) {
     return (
@@ -292,7 +280,7 @@ export default function ScoopOfTheDay({
         </Text>
       </View>
 
-      {countdown.isPast7PM ? (
+      {!isScoopRevealed && countdown.isPast7PM ? (
         <TouchableOpacity activeOpacity={0.9} onPress={onScoopPress}>
           <View className="relative overflow-hidden rounded-[28px]">
             <LinearGradient

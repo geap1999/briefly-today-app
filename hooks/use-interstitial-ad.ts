@@ -1,3 +1,4 @@
+import { getTimezoneDateString } from "@/utils/timezone-date";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react";
 import { Alert } from "react-native";
@@ -25,9 +26,7 @@ export function useInterstitialAd(
         setIsScoopRevealed(true);
         try {
           await fetchDailyScoop();
-          const today = new Date().toLocaleDateString("en-US", {
-            timeZone: timezone,
-          });
+          const today = getTimezoneDateString(timezone);
           await AsyncStorage.setItem("last_revealed_date", today);
         } catch (e) {
           console.log("Storage error", e);

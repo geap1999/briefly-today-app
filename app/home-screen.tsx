@@ -381,7 +381,6 @@ export default function HomeScreen({
 
                 <ScoopOfTheDay
                   currentTime={currentTime}
-                  loading={loading}
                   isScoopRevealed={isScoopRevealed}
                   scoop={scoop}
                   timezone={timezone}
