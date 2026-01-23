@@ -1,4 +1,3 @@
-import { getTimezoneDateString } from "@/utils/timezone-date";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react";
 import { Alert } from "react-native";
@@ -9,55 +8,68 @@ export function useInterstitialAd(
   setIsScoopRevealed: (v: boolean) => void,
   setAdLoaded: (v: boolean) => void,
   fetchDailyScoop: () => Promise<void>,
-  timezone = "America/Chicago",
   onAdClosed?: () => void,
 ) {
   useEffect(() => {
-    const unsubscribeLoaded = interstitial.addAdEventListener(
-      AdEventType.LOADED,
-      () => {
-        setAdLoaded(true);
-      },
-    );
+    const setupAd = async () => {
+      const scoopStatus = await AsyncStorage.getItem("scoop_revealed");
 
-    const unsubscribeClosed = interstitial.addAdEventListener(
-      AdEventType.CLOSED,
-      async () => {
-        setIsScoopRevealed(true);
-        try {
-          await fetchDailyScoop();
-          const today = getTimezoneDateString(timezone);
-          await AsyncStorage.setItem("last_revealed_date", today);
-        } catch (e) {
-          console.log("Storage error", e);
-          Alert.alert(
-            "Error",
-            "An error occurred. Please try refreshing the app.",
-          );
-        }
+      if (scoopStatus === "true") {
+        return;
+      }
 
-        setAdLoaded(false);
-        interstitial.load();
+      const unsubscribeLoaded = interstitial.addAdEventListener(
+        AdEventType.LOADED,
+        () => {
+          setAdLoaded(true);
+        },
+      );
 
-        // Trigger scroll after ad is closed
-        if (onAdClosed) {
-          setTimeout(() => onAdClosed(), 300);
-        }
-      },
-    );
+      const unsubscribeClosed = interstitial.addAdEventListener(
+        AdEventType.CLOSED,
+        async () => {
+          try {
+            await fetchDailyScoop();
+            await AsyncStorage.setItem("scoop_revealed", "true");
+            setIsScoopRevealed(true);
+          } catch (e) {
+            Alert.alert(
+              "Error",
+              "An error occurred. Please try refreshing the app.",
+            );
+          }
 
-    interstitial.load();
+          setAdLoaded(false);
+
+          if (onAdClosed) {
+            setTimeout(() => onAdClosed(), 300);
+          }
+        },
+      );
+
+      interstitial.load();
+
+      return () => {
+        unsubscribeLoaded();
+        unsubscribeClosed();
+      };
+    };
+
+    let cleanup: (() => void) | undefined;
+    setupAd().then((cleanupFn) => {
+      cleanup = cleanupFn;
+    });
 
     return () => {
-      unsubscribeLoaded();
-      unsubscribeClosed();
+      if (cleanup) {
+        cleanup();
+      }
     };
   }, [
     interstitial,
     setIsScoopRevealed,
     setAdLoaded,
     fetchDailyScoop,
-    timezone,
     onAdClosed,
   ]);
 }

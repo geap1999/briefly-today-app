@@ -32,7 +32,6 @@ import { useCurrentTime } from "../hooks/use-current-time";
 import { useDayData } from "../hooks/use-day-data";
 import { useInterstitialAd } from "../hooks/use-interstitial-ad";
 import { useMidnightRefresh } from "../hooks/use-midnight-refresh";
-import { useScoopReveal } from "../hooks/use-scoop-reveal";
 
 interface Scoop {
   id: number;
@@ -130,7 +129,7 @@ export default function HomeScreen({
   const [adLoaded, setAdLoaded] = useState(false);
   const [isScoopRevealed, setIsScoopRevealed] = useState(false);
 
-  useMidnightRefresh(refreshData, timezone);
+  useMidnightRefresh(refreshData, setIsScoopRevealed, timezone);
 
   const currentSeason = useMemo(() => {
     const now = new Date();
@@ -162,10 +161,9 @@ export default function HomeScreen({
     setLoading(false);
   }, [region]);
 
-  useScoopReveal(setIsScoopRevealed, fetchDailyScoop, timezone);
-  const currentTime = useCurrentTime(setIsScoopRevealed, timezone);
+  const currentTime = useCurrentTime();
 
-  const scrollToScoop = useCallback(() => {
+  const scrollToScoop = useCallback(async () => {
     scrollViewRef.current?.scrollTo({ y: 400, animated: true });
   }, []);
 
@@ -174,14 +172,18 @@ export default function HomeScreen({
     setIsScoopRevealed,
     setAdLoaded,
     fetchDailyScoop,
-    timezone,
     scrollToScoop,
   );
+
   useCelebHeights(
     celebHeights,
     todayData.celebrities.length,
     setMaxCelebCardHeight,
   );
+
+  useEffect(() => {
+    fetchDailyScoop();
+  }, []);
 
   // Signal when initial data is loaded
   useEffect(() => {
