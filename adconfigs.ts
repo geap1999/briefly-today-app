@@ -11,7 +11,12 @@ const isProduction = process.env.EXPO_PUBLIC_ENV === 'production';
 const INTERSTITIAL_AD_ID_IOS = isProduction ? PRODUCTION_INTERSTITIAL_IOS_ID : TestIds.INTERSTITIAL;
 const INTERSTITIAL_AD_ID = isProduction ? PRODUCTION_INTERSTITIAL_ANDROID_ID : TestIds.INTERSTITIAL;
 
+// export const adUnitId = Platform.select({
+//   ios: INTERSTITIAL_AD_ID_IOS,
+//   android: INTERSTITIAL_AD_ID,
+// }) as string;
+
 export const adUnitId = Platform.select({
-  ios: INTERSTITIAL_AD_ID_IOS,
-  android: INTERSTITIAL_AD_ID,
+  ios: TestIds.INTERSTITIAL,
+  android: TestIds.INTERSTITIAL,
 }) as string;
