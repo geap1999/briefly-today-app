@@ -38,63 +38,62 @@ export function useDayData() {
     formattedDate: "",
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const now = new Date();
-      const month = now.getMonth() + 1;
-      const day = now.getDate();
-      const year = now.getFullYear();
+  const fetchData = async () => {
+    const now = new Date();
+    const month = now.getMonth() + 1;
+    const day = now.getDate();
+    const year = now.getFullYear();
 
-      const dayOfWeek = now
-        .toLocaleDateString("en-US", { weekday: "long" })
-        .toUpperCase();
+    const dayOfWeek = now
+      .toLocaleDateString("en-US", { weekday: "long" })
+      .toUpperCase();
 
-      const formattedDate = now.toLocaleDateString("en-US", {
-        month: "2-digit",
-        day: "2-digit",
-        year: "numeric",
+    const formattedDate = now.toLocaleDateString("en-US", {
+      month: "2-digit",
+      day: "2-digit",
+      year: "numeric",
+    });
+
+    setDateInfo({ dayOfWeek, formattedDate });
+
+    const data: any = await getDailyFacts(month, day);
+
+    if (data && data.length > 0) {
+      const dayData = data[0];
+      const items = dayData.payload.items || [];
+
+      const celebrities = items.filter(
+        (item: DataItem) => item.category === "Celeb",
+      );
+      const history = items.filter(
+        (item: DataItem) => item.category === "History",
+      );
+      const popCulture = items.filter(
+        (item: DataItem) => item.category === "Pop Culture",
+      );
+      const natureTech = items.filter(
+        (item: DataItem) => item.category === "Nature & Tech",
+      );
+
+      const saint = dayData.payload.saint || null;
+
+      const movableHoliday = getMovableHoliday(month, day, year);
+      const special = movableHoliday || dayData.payload.special || undefined;
+
+      setTodayData({
+        saint,
+        celebrities,
+        history,
+        popCulture,
+        natureTech,
+        special,
       });
+    }
+  };
 
-      setDateInfo({ dayOfWeek, formattedDate });
-
-      const data = await getDailyFacts(month, day);
-
-      if (data && data.length > 0) {
-        const dayData = data[0];
-        const items = dayData.payload.items || [];
-
-        const celebrities = items.filter(
-          (item: DataItem) => item.category === "Celeb"
-        );
-        const history = items.filter(
-          (item: DataItem) => item.category === "History"
-        );
-        const popCulture = items.filter(
-          (item: DataItem) => item.category === "Pop Culture"
-        );
-        const natureTech = items.filter(
-          (item: DataItem) => item.category === "Nature & Tech"
-        );
-
-        const saint = dayData.payload.saint || null;
-
-        // Check for movable holiday first, fallback to database special
-        const movableHoliday = getMovableHoliday(month, day, year);
-        const special = movableHoliday || dayData.payload.special || undefined;
-
-        setTodayData({
-          saint,
-          celebrities,
-          history,
-          popCulture,
-          natureTech,
-          special,
-        });
-      }
-    };
-
+  useEffect(() => {
     fetchData();
   }, []);
 
-  return { todayData, dateInfo };
+  return { todayData, dateInfo, refreshData: fetchData };
 }

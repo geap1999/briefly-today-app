@@ -31,6 +31,7 @@ import { useCelebHeights } from "../hooks/use-celeb-heights";
 import { useCurrentTime } from "../hooks/use-current-time";
 import { useDayData } from "../hooks/use-day-data";
 import { useInterstitialAd } from "../hooks/use-interstitial-ad";
+import { useMidnightRefresh } from "../hooks/use-midnight-refresh";
 import { useScoopReveal } from "../hooks/use-scoop-reveal";
 
 interface Scoop {
@@ -121,13 +122,15 @@ export default function HomeScreen({
 }: HomeScreenProps) {
   const { isDarkMode } = useTheme();
   const { region, timezone } = useTimezone();
-  const { todayData, dateInfo } = useDayData();
+  const { todayData, dateInfo, refreshData } = useDayData();
   const { isTablet } = useResponsive();
   const horizontalPadding = getHorizontalPadding();
   const maxContentWidth = getMaxContentWidth();
 
   const [adLoaded, setAdLoaded] = useState(false);
   const [isScoopRevealed, setIsScoopRevealed] = useState(false);
+
+  useMidnightRefresh(refreshData, timezone);
 
   const currentSeason = useMemo(() => {
     const now = new Date();

@@ -5,7 +5,7 @@ import * as WebBrowser from "expo-web-browser";
 export const getMovableHoliday = (
   month: number,
   day: number,
-  year: number
+  year: number,
 ): string | null => {
   const date = new Date(year, month - 1, day);
   const dayOfWeek = date.getDay();
@@ -37,7 +37,7 @@ const calculateEaster = (year: number): { month: number; day: number } => {
 
 export const getScoopCountdown = (
   now = new Date(),
-  timeZone = "America/Chicago"
+  timeZone = "America/Chicago",
 ) => {
   const currentHourTZ = parseInt(formatInTimeZone(now, timeZone, "H"));
   const currentMinuteTZ = parseInt(formatInTimeZone(now, timeZone, "m"));
@@ -45,7 +45,7 @@ export const getScoopCountdown = (
   const todayDateTZ = formatInTimeZone(now, timeZone, "yyyy-MM-dd");
   const targetString = `${todayDateTZ}T19:00:00`;
   const target = new Date(
-    targetString + formatInTimeZone(now, timeZone, "xxx")
+    targetString + formatInTimeZone(now, timeZone, "xxx"),
   );
 
   if (currentHourTZ >= 19) {
@@ -58,6 +58,28 @@ export const getScoopCountdown = (
   const seconds = totalSeconds % 60;
 
   return { isPast7PM: false, hours, minutes, seconds };
+};
+
+export const getMidnightCountdown = (
+  now = new Date(),
+  timeZone = "America/Chicago",
+) => {
+  const todayDateTZ = formatInTimeZone(now, timeZone, "yyyy-MM-dd");
+  const tomorrowDate = new Date(
+    new Date(todayDateTZ).getTime() + 24 * 60 * 60 * 1000,
+  );
+  const tomorrowDateTZ = formatInTimeZone(tomorrowDate, timeZone, "yyyy-MM-dd");
+  const targetString = `${tomorrowDateTZ}T00:00:00`;
+  const target = new Date(
+    targetString + formatInTimeZone(now, timeZone, "xxx"),
+  );
+
+  const totalSeconds = differenceInSeconds(target, now);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  return { hours, minutes, seconds };
 };
 
 export const handleOpenArticle = async (url: string, accentColor: string) => {
