@@ -20,7 +20,6 @@ export default function HeroHeader({
   dateInfo,
   todayData,
   scrollY,
-  isDarkMode = false,
 }: Props) {
   const { isTablet } = useResponsive();
 

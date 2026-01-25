@@ -26,6 +26,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import WarningModal from "./warning-modal";
+import { useTimezone } from "@/contexts/timezone-context";
 
 interface Props {
   currentTime: any;
@@ -48,7 +49,8 @@ export default function ScoopOfTheDay({
   const countdown = getScoopCountdown(currentTime, timezone);
   const [isLiked, setIsLiked] = useState(false);
   const [showWarningModal, setShowWarningModal] = useState(false);
-
+  const { region } = useTimezone();
+  
   useEffect(() => {
     const checkLikedStatus = async () => {
       if (scoop && scoop.title) {
@@ -324,7 +326,7 @@ export default function ScoopOfTheDay({
                 resizeMode="contain"
               />
               <Text className="text-sm font-semibold text-purple-700 uppercase tracking-[2px] mb-6">
-                Unlocks at 7:00 PM ET
+                Unlocks at 7:00 PM {region === "US" ? "CT" : "CET"}
               </Text>
               <View
                 className="flex-row items-center gap-3"
