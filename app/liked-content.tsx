@@ -20,6 +20,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import "../global.css";
+import { useTimezone } from "@/contexts/timezone-context";
 
 interface LikedContentScreenProps {
   onBack: () => void;
@@ -60,6 +61,7 @@ export default function LikedContentScreen({
   const [likedFacts, setLikedFacts] = useState<LikedFact[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState("All");
+  const { region } = useTimezone();
 
   useEffect(() => {
     loadLikedFacts();
@@ -363,7 +365,7 @@ export default function LikedContentScreen({
                                   opacity: 0.9,
                                 }}
                               >
-                                {fact.month}/{fact.day}
+                                {region === "US" ? `${fact.month}/${fact.day}` : `${fact.day}/${fact.month}`}
                               </Text>
                             </View>
                             <TouchableOpacity

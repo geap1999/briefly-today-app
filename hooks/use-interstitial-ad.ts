@@ -5,6 +5,7 @@ import { AdEventType } from "react-native-google-mobile-ads";
 
 export function useInterstitialAd(
   interstitial: any,
+  isScoopRevealed: boolean,
   setIsScoopRevealed: (v: boolean) => void,
   setAdLoaded: (v: boolean) => void,
   fetchDailyScoop: () => Promise<void>,
@@ -12,9 +13,8 @@ export function useInterstitialAd(
 ) {
   useEffect(() => {
     const setupAd = async () => {
-      const scoopStatus = await AsyncStorage.getItem("scoop_revealed");
-
-      if (scoopStatus === "true") {
+      // If scoop already revealed, don't setup ad
+      if (isScoopRevealed) {
         return;
       }
 
@@ -67,6 +67,7 @@ export function useInterstitialAd(
     };
   }, [
     interstitial,
+    isScoopRevealed,
     setIsScoopRevealed,
     setAdLoaded,
     fetchDailyScoop,

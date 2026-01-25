@@ -121,7 +121,7 @@ export default function HomeScreen({
 }: HomeScreenProps) {
   const { isDarkMode } = useTheme();
   const { region, timezone } = useTimezone();
-  const { todayData, dateInfo, refreshData } = useDayData();
+  const { todayData, dateInfo, refreshData } = useDayData(region);
   const { isTablet } = useResponsive();
   const horizontalPadding = getHorizontalPadding();
   const maxContentWidth = getMaxContentWidth();
@@ -169,6 +169,7 @@ export default function HomeScreen({
 
   useInterstitialAd(
     interstitial,
+    isScoopRevealed,
     setIsScoopRevealed,
     setAdLoaded,
     fetchDailyScoop,
