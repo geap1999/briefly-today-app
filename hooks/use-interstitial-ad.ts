@@ -1,3 +1,4 @@
+import { getTimezoneDateString } from "@/utils/timezone-date";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react";
 import { Alert } from "react-native";
@@ -10,6 +11,7 @@ export function useInterstitialAd(
   setAdLoaded: (v: boolean) => void,
   fetchDailyScoop: () => Promise<void>,
   onAdClosed?: () => void,
+  timezone = "America/Chicago"
 ) {
   useEffect(() => {
     const setupAd = async () => {
@@ -29,8 +31,9 @@ export function useInterstitialAd(
         AdEventType.CLOSED,
         async () => {
           try {
+            const today = getTimezoneDateString(timezone);
             await fetchDailyScoop();
-            await AsyncStorage.setItem("scoop_revealed", "true");
+            await AsyncStorage.setItem("last_revealed_date", today);
             setIsScoopRevealed(true);
           } catch (e) {
             Alert.alert(

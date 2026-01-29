@@ -37,15 +37,17 @@ export function useMidnightRefresh(
     if (lastRefreshDateRef.current !== currentDate) {
       lastRefreshDateRef.current = currentDate;
       setIsScoopRevealedRef.current(false);
-      await AsyncStorage.setItem("scoop_revealed", "false");
       onMidnightRef.current();
       return true;
     }
-    const scoopRevealed = await AsyncStorage.getItem("scoop_revealed");
 
-    if (scoopRevealed === "true") {
-      setIsScoopRevealedRef.current(true);
+    const lastRevealDate = await AsyncStorage.getItem("last_revealed_date");
+
+    if (lastRevealDate !== currentDate) {
+      setIsScoopRevealedRef.current(false);
+      return true;
     }
+    setIsScoopRevealedRef.current(true);
     return false;
   };
 
@@ -54,8 +56,8 @@ export function useMidnightRefresh(
 
     const delay = getMidnightDelay(timeZone);
 
-    timerRef.current = setTimeout(() => {
-      runMidnightIfNeeded();
+    timerRef.current = setTimeout(async () => {
+      await runMidnightIfNeeded();
       scheduleMidnightRefresh();
     }, delay);
   };
@@ -70,9 +72,9 @@ export function useMidnightRefresh(
     
     const subscription = AppState.addEventListener(
       "change",
-      (nextAppState: AppStateStatus) => {
+      async (nextAppState: AppStateStatus) => {
         if (nextAppState === "active") {
-          runMidnightIfNeeded();
+          await runMidnightIfNeeded();
           scheduleMidnightRefresh();
         }
       },
