@@ -13,7 +13,9 @@ import {
   getMaxContentWidth,
   useResponsive,
 } from "@/utils/responsive";
+import { getTimezoneDateString } from "@/utils/timezone-date";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -174,6 +176,7 @@ export default function HomeScreen({
     setAdLoaded,
     fetchDailyScoop,
     scrollToScoop,
+    timezone,
   );
 
   useCelebHeights(
@@ -196,13 +199,20 @@ export default function HomeScreen({
   // Padding to allow header to disappear only when scoop is revealed and loaded
   const dynamicPaddingBottom = isScoopRevealed && scoop && !loading ? 180 : 40;
 
-  const handleScoopPress = () => {
+  const handleScoopPress = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     if (adLoaded) {
       interstitial.show();
     } else {
-      setIsScoopRevealed(true);
-      setTimeout(() => scrollToScoop(), 300);
+      try {
+        await fetchDailyScoop();
+        const today = getTimezoneDateString(timezone);
+        await AsyncStorage.setItem("last_revealed_date", today);
+        setIsScoopRevealed(true);
+        setTimeout(() => scrollToScoop(), 300);
+      } catch (error) {
+        console.warn("Failed to fetch daily scoop:", error);
+      }
     }
   };
 
