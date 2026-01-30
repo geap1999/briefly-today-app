@@ -8,10 +8,10 @@ import { useTheme } from "@/contexts/theme-context";
 import { useTimezone } from "@/contexts/timezone-context";
 import { getScoop } from "@/services/supabase/scoop";
 import {
-  getFontSize,
-  getHorizontalPadding,
-  getMaxContentWidth,
-  useResponsive,
+    getFontSize,
+    getHorizontalPadding,
+    getMaxContentWidth,
+    useResponsive,
 } from "@/utils/responsive";
 import { getTimezoneDateString } from "@/utils/timezone-date";
 import { Ionicons } from "@expo/vector-icons";
@@ -23,8 +23,8 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { InterstitialAd } from "react-native-google-mobile-ads";
 import PagerView from "react-native-pager-view";
 import Animated, {
-  useAnimatedScrollHandler,
-  useSharedValue,
+    useAnimatedScrollHandler,
+    useSharedValue,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { adUnitId } from "../adconfigs";
@@ -113,12 +113,14 @@ const seasonThemes: Record<Season, SeasonTheme> = {
 interface HomeScreenProps {
   onSettingsPress: () => void;
   onLikedContentPress: () => void;
+  onArchivesPress: () => void;
   onDataLoaded?: () => void;
 }
 
 export default function HomeScreen({
   onSettingsPress,
   onLikedContentPress,
+  onArchivesPress,
   onDataLoaded,
 }: HomeScreenProps) {
   const { isDarkMode } = useTheme();
@@ -235,6 +237,10 @@ export default function HomeScreen({
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onLikedContentPress();
   };
+  const handleArchivesPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onArchivesPress();
+  };
 
   return (
     <View className="flex-1">
@@ -315,8 +321,29 @@ export default function HomeScreen({
                       : undefined,
                 }}
               >
-                {/* Heart and Settings Icons */}
+                {/* Archives, Heart and Settings Icons */}
                 <View className="flex-row items-center justify-end gap-3 mb-3">
+                  <TouchableOpacity
+                    onPress={handleArchivesPress}
+                    className="rounded-full p-3 shadow-sm"
+                    activeOpacity={0.7}
+                    style={{
+                      backgroundColor: isDarkMode
+                        ? "rgba(30, 41, 59, 0.7)"
+                        : "rgba(255, 255, 255, 0.7)",
+                      shadowColor: "#000",
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.1,
+                      shadowRadius: 4,
+                      elevation: 3,
+                    }}
+                  >
+                    <Ionicons
+                      name="archive-outline"
+                      size={24}
+                      color={isDarkMode ? "#60A5FA" : "#3B82F6"}
+                    />
+                  </TouchableOpacity>
                   <TouchableOpacity
                     onPress={handleLikedContentPress}
                     className="rounded-full p-3 shadow-sm"

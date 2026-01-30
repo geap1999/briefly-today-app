@@ -4,6 +4,7 @@ import { TimezoneProvider } from "@/contexts/timezone-context";
 import * as SplashScreen from "expo-splash-screen";
 import { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
+import ArchivesScreen from "./archives";
 import HomeScreen from "./home-screen";
 import LikedContentScreen from "./liked-content";
 import SettingsScreen from "./settings-screen";
@@ -14,6 +15,7 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [showLikedContent, setShowLikedContent] = useState(false);
+  const [showArchives, setShowArchives] = useState(false);
   const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
@@ -35,6 +37,7 @@ export default function App() {
               <HomeScreen
                 onSettingsPress={() => setShowSettings(true)}
                 onLikedContentPress={() => setShowLikedContent(true)}
+                onArchivesPress={() => setShowArchives(true)}
                 onDataLoaded={() => setAppIsReady(true)}
               />
             </ConsentHandler>
@@ -53,10 +56,13 @@ export default function App() {
               <SettingsScreen onBack={() => setShowSettings(false)} />
             ) : showLikedContent ? (
               <LikedContentScreen onBack={() => setShowLikedContent(false)} />
+            ) : showArchives ? (
+              <ArchivesScreen onBack={() => setShowArchives(false)} />
             ) : (
               <HomeScreen
                 onSettingsPress={() => setShowSettings(true)}
                 onLikedContentPress={() => setShowLikedContent(true)}
+                onArchivesPress={() => setShowArchives(true)}
                 onDataLoaded={() => setAppIsReady(true)}
               />
             )}
