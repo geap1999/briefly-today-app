@@ -1,3 +1,4 @@
+import { useLocale } from "@/contexts/locale-context";
 import { getFontSize, moderateScale, useResponsive } from "@/utils/responsive";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
@@ -13,6 +14,7 @@ export default function EmptyState({
   isDarkMode = false,
 }: Props) {
   const { isTablet } = useResponsive();
+  const { t } = useLocale();
 
   if (hasAnyContent) return null;
 
@@ -45,7 +47,7 @@ export default function EmptyState({
             color: isDarkMode ? "#F1F5F9" : "#1E293B",
           }}
         >
-          Nothing for Today Yet
+          {t("emptyState.title")}
         </Text>
         <Text
           className="text-center leading-relaxed px-4"
@@ -54,8 +56,7 @@ export default function EmptyState({
             color: isDarkMode ? "#CBD5E1" : "#475569",
           }}
         >
-          Once your dataset includes today&apos;s date, you&apos;ll discover
-          saints, celebrities, history, and fascinating facts here.
+          {t("emptyState.description")}
         </Text>
       </LinearGradient>
     </View>

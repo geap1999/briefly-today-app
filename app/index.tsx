@@ -1,4 +1,5 @@
 import ConsentHandler from "@/components/consent-handler";
+import { LocaleProvider } from "@/contexts/locale-context";
 import { ThemeProvider } from "@/contexts/theme-context";
 import { TimezoneProvider } from "@/contexts/timezone-context";
 import * as SplashScreen from "expo-splash-screen";
@@ -31,44 +32,48 @@ export default function App() {
   if (!appIsReady) {
     return (
       <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-        <ThemeProvider>
-          <TimezoneProvider>
-            <ConsentHandler>
-              <HomeScreen
-                onSettingsPress={() => setShowSettings(true)}
-                onLikedContentPress={() => setShowLikedContent(true)}
-                onArchivesPress={() => setShowArchives(true)}
-                onDataLoaded={() => setAppIsReady(true)}
-              />
-            </ConsentHandler>
-          </TimezoneProvider>
-        </ThemeProvider>
+        <LocaleProvider>
+          <ThemeProvider>
+            <TimezoneProvider>
+              <ConsentHandler>
+                <HomeScreen
+                  onSettingsPress={() => setShowSettings(true)}
+                  onLikedContentPress={() => setShowLikedContent(true)}
+                  onArchivesPress={() => setShowArchives(true)}
+                  onDataLoaded={() => setAppIsReady(true)}
+                />
+              </ConsentHandler>
+            </TimezoneProvider>
+          </ThemeProvider>
+        </LocaleProvider>
       </View>
     );
   }
 
   return (
     <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-      <ThemeProvider>
-        <TimezoneProvider>
-          <ConsentHandler>
-            {showSettings ? (
-              <SettingsScreen onBack={() => setShowSettings(false)} />
-            ) : showLikedContent ? (
-              <LikedContentScreen onBack={() => setShowLikedContent(false)} />
-            ) : showArchives ? (
-              <ArchivesScreen onBack={() => setShowArchives(false)} />
-            ) : (
-              <HomeScreen
-                onSettingsPress={() => setShowSettings(true)}
-                onLikedContentPress={() => setShowLikedContent(true)}
-                onArchivesPress={() => setShowArchives(true)}
-                onDataLoaded={() => setAppIsReady(true)}
-              />
-            )}
-          </ConsentHandler>
-        </TimezoneProvider>
-      </ThemeProvider>
+      <LocaleProvider>
+        <ThemeProvider>
+          <TimezoneProvider>
+            <ConsentHandler>
+              {showSettings ? (
+                <SettingsScreen onBack={() => setShowSettings(false)} />
+              ) : showLikedContent ? (
+                <LikedContentScreen onBack={() => setShowLikedContent(false)} />
+              ) : showArchives ? (
+                <ArchivesScreen onBack={() => setShowArchives(false)} />
+              ) : (
+                <HomeScreen
+                  onSettingsPress={() => setShowSettings(true)}
+                  onLikedContentPress={() => setShowLikedContent(true)}
+                  onArchivesPress={() => setShowArchives(true)}
+                  onDataLoaded={() => setAppIsReady(true)}
+                />
+              )}
+            </ConsentHandler>
+          </TimezoneProvider>
+        </ThemeProvider>
+      </LocaleProvider>
     </View>
   );
 }

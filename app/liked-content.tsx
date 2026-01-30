@@ -1,26 +1,27 @@
+import { useLocale } from "@/contexts/locale-context";
 import { useTheme } from "@/contexts/theme-context";
+import { useTimezone } from "@/contexts/timezone-context";
 import { getLikedFacts, LikedFact, unlikeFact } from "@/utils/liked-facts";
 import {
-  getFontSize,
-  getHorizontalPadding,
-  getMaxContentWidth,
-  useResponsive,
+    getFontSize,
+    getHorizontalPadding,
+    getMaxContentWidth,
+    useResponsive,
 } from "@/utils/responsive";
 import { handleOpenArticle } from "@/utils/utils";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Image,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Image,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import "../global.css";
-import { useTimezone } from "@/contexts/timezone-context";
 
 interface LikedContentScreenProps {
   onBack: () => void;
@@ -34,27 +35,28 @@ const CATEGORY_COLORS: Record<string, string> = {
   "Nature & Tech": "#10B981",
 };
 
-const CATEGORY_LABELS: Record<string, string> = {
-  Scoop: "Scoop",
-  Celeb: "Birthday",
-  "Pop Culture": "Pop Culture",
-  History: "History",
-  "Nature & Tech": "Breakthrough",
+const CATEGORY_LABELS_KEYS: Record<string, string> = {
+  Scoop: "scoop",
+  Celeb: "birthday",
+  "Pop Culture": "popCulture",
+  History: "history",
+  "Nature & Tech": "natureTech",
 };
 
 const FILTER_CATEGORIES = [
-  { key: "All", label: "All", color: "#EF4444" },
-  { key: "Scoop", label: "Scoops", color: "#9333EA" },
-  { key: "Celeb", label: "Birthdays", color: "#F59E0B" },
-  { key: "Pop Culture", label: "Pop Culture", color: "#EC4899" },
-  { key: "History", label: "History", color: "#3B82F6" },
-  { key: "Nature & Tech", label: "Breakthroughs", color: "#10B981" },
+  { key: "All", labelKey: "filters.all", color: "#EF4444" },
+  { key: "Scoop", labelKey: "filters.scoops", color: "#9333EA" },
+  { key: "Celeb", labelKey: "filters.birthdays", color: "#F59E0B" },
+  { key: "Pop Culture", labelKey: "filters.popCulture", color: "#EC4899" },
+  { key: "History", labelKey: "filters.history", color: "#3B82F6" },
+  { key: "Nature & Tech", labelKey: "filters.breakthroughs", color: "#10B981" },
 ];
 
 export default function LikedContentScreen({
   onBack,
 }: LikedContentScreenProps) {
   const { isDarkMode } = useTheme();
+  const { t } = useLocale();
   const { isTablet } = useResponsive();
   const horizontalPadding = getHorizontalPadding();
   const maxContentWidth = getMaxContentWidth();
@@ -156,7 +158,7 @@ export default function LikedContentScreen({
                     letterSpacing: -0.5,
                   }}
                 >
-                  Likes
+                  {t("likes")}
                 </Text>
                 <Image
                   source={require("@/assets/images/likes.png")}
@@ -216,7 +218,7 @@ export default function LikedContentScreen({
                                   : "#334155",
                             }}
                           >
-                            {category.label}
+                            {t(category.labelKey)}
                           </Text>
                           <View
                             style={{
@@ -276,7 +278,7 @@ export default function LikedContentScreen({
                     color: isDarkMode ? "#F1F5F9" : "#1E293B",
                   }}
                 >
-                  No Likes Yet
+                  {t("noLikedItems")}
                 </Text>
                 <Text
                   className="text-center"
@@ -285,8 +287,7 @@ export default function LikedContentScreen({
                     color: isDarkMode ? "#94A3B8" : "#64748B",
                   }}
                 >
-                  You can like up to 20 facts per category, just tap the heart
-                  icon!
+                  {t("startLikingMessage")}
                 </Text>
               </View>
             ) : filteredFacts.length === 0 ? (
@@ -305,7 +306,7 @@ export default function LikedContentScreen({
                     color: isDarkMode ? "#F1F5F9" : "#1E293B",
                   }}
                 >
-                  No likes yet!
+                  {t("noLikedItems")}
                 </Text>
               </View>
             ) : (
@@ -316,8 +317,9 @@ export default function LikedContentScreen({
                 {filteredFacts.map((fact, index) => {
                   const categoryColor =
                     CATEGORY_COLORS[fact.category] || "#6366F1";
-                  const categoryLabel =
-                    CATEGORY_LABELS[fact.category] || fact.category;
+                  const categoryLabelKey =
+                    CATEGORY_LABELS_KEYS[fact.category] || "scoop";
+                  const categoryLabel = t(categoryLabelKey);
 
                   return (
                     <TouchableOpacity
@@ -365,7 +367,9 @@ export default function LikedContentScreen({
                                   opacity: 0.9,
                                 }}
                               >
-                                {region === "US" ? `${fact.month}/${fact.day}` : `${fact.day}/${fact.month}`}
+                                {region === "US"
+                                  ? `${fact.month}/${fact.day}`
+                                  : `${fact.day}/${fact.month}`}
                               </Text>
                             </View>
                             <TouchableOpacity

@@ -6,10 +6,11 @@ interface TimezoneContextType {
   region: Region;
   timezone: string;
   isLoading: boolean;
+  isFrance: boolean;
 }
 
 const TimezoneContext = createContext<TimezoneContextType | undefined>(
-  undefined
+  undefined,
 );
 
 const REGION_TIMEZONES: Record<Region, string> = {
@@ -41,7 +42,32 @@ const EUROPEAN_TIMEZONES = [
   "Europe/Zurich",
 ];
 
-// Detect region based on device timezone
+const FRENCH_TIMEZONES = [
+  "Europe/Paris",
+  "Indian/Reunion",
+  "Indian/Mayotte",
+  "America/Martinique",
+  "America/Guadeloupe",
+  "America/Cayenne",
+  "Pacific/Tahiti",
+  "Pacific/Noumea",
+  "Pacific/Marquesas",
+  "Indian/Kerguelen",
+];
+
+const detectIsFrance = (): boolean => {
+  try {
+    const deviceTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    return FRENCH_TIMEZONES.some(
+      (tz) => deviceTimezone === tz || deviceTimezone.includes(tz),
+    );
+  } catch (error) {
+    console.error("Error detecting France timezone:", error);
+    return false;
+  }
+};
+
 const detectRegion = (): Region => {
   try {
     const deviceTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -63,18 +89,22 @@ const detectRegion = (): Region => {
 
 export function TimezoneProvider({ children }: { children: React.ReactNode }) {
   const [region, setRegionState] = useState<Region>("US");
+  const [isFrance, setIsFrance] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const detectedRegion = detectRegion();
+    const detectedIsFrance = detectIsFrance();
+
     setRegionState(detectedRegion);
+    setIsFrance(detectedIsFrance);
     setIsLoading(false);
   }, []);
 
   const timezone = REGION_TIMEZONES[region];
 
   return (
-    <TimezoneContext.Provider value={{ region, timezone, isLoading }}>
+    <TimezoneContext.Provider value={{ region, timezone, isLoading, isFrance }}>
       {children}
     </TimezoneContext.Provider>
   );

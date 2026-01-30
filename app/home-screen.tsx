@@ -2,16 +2,18 @@ import CelebritiesCarousel from "@/components/ui/celebrities-carousel";
 import Divider from "@/components/ui/divider";
 import EmptyState from "@/components/ui/empty-state";
 import HeroHeader from "@/components/ui/hero-header";
+import LanguageModal from "@/components/ui/language-modal";
 import ScoopOfTheDay from "@/components/ui/scoop-of-the-day";
 import VerticalSection from "@/components/ui/vertical-section";
+import { useLocale } from "@/contexts/locale-context";
 import { useTheme } from "@/contexts/theme-context";
 import { useTimezone } from "@/contexts/timezone-context";
 import { getScoop } from "@/services/supabase/scoop";
 import {
-    getFontSize,
-    getHorizontalPadding,
-    getMaxContentWidth,
-    useResponsive,
+  getFontSize,
+  getHorizontalPadding,
+  getMaxContentWidth,
+  useResponsive,
 } from "@/utils/responsive";
 import { getTimezoneDateString } from "@/utils/timezone-date";
 import { Ionicons } from "@expo/vector-icons";
@@ -23,8 +25,8 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { InterstitialAd } from "react-native-google-mobile-ads";
 import PagerView from "react-native-pager-view";
 import Animated, {
-    useAnimatedScrollHandler,
-    useSharedValue,
+  useAnimatedScrollHandler,
+  useSharedValue,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { adUnitId } from "../adconfigs";
@@ -124,6 +126,7 @@ export default function HomeScreen({
   onDataLoaded,
 }: HomeScreenProps) {
   const { isDarkMode } = useTheme();
+  const { t, locale } = useLocale();
   const { region, timezone } = useTimezone();
   const { todayData, dateInfo, refreshData } = useDayData(region);
   const { isTablet } = useResponsive();
@@ -132,6 +135,7 @@ export default function HomeScreen({
 
   const [adLoaded, setAdLoaded] = useState(false);
   const [isScoopRevealed, setIsScoopRevealed] = useState(false);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
 
   useMidnightRefresh(refreshData, setIsScoopRevealed, timezone);
 
@@ -242,6 +246,14 @@ export default function HomeScreen({
     onArchivesPress();
   };
 
+  const handleLanguagePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setShowLanguageModal(true);
+  };
+
+  // Get current flag based on locale
+  const currentFlag = locale === "fr" ? "🇫🇷" : "🇺🇸";
+
   return (
     <View className="flex-1">
       <LinearGradient
@@ -321,11 +333,11 @@ export default function HomeScreen({
                       : undefined,
                 }}
               >
-                {/* Archives, Heart and Settings Icons */}
-                <View className="flex-row items-center justify-end gap-3 mb-3">
+                {/* Language Flag Icon - Top Left */}
+                <View className="flex-row items-center justify-between mb-3">
                   <TouchableOpacity
-                    onPress={handleArchivesPress}
-                    className="rounded-full p-3 shadow-sm"
+                    onPress={handleLanguagePress}
+                    className="rounded-full shadow-sm"
                     activeOpacity={0.7}
                     style={{
                       backgroundColor: isDarkMode
@@ -336,52 +348,77 @@ export default function HomeScreen({
                       shadowOpacity: 0.1,
                       shadowRadius: 4,
                       elevation: 3,
+                      width: 52,
+                      height: 52,
+                      justifyContent: "center",
+                      alignItems: "center",
                     }}
                   >
-                    <Ionicons
-                      name="archive-outline"
-                      size={24}
-                      color={isDarkMode ? "#60A5FA" : "#3B82F6"}
-                    />
+                    <Text style={{ fontSize: 28 }}>{currentFlag}</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={handleLikedContentPress}
-                    className="rounded-full p-3 shadow-sm"
-                    activeOpacity={0.7}
-                    style={{
-                      backgroundColor: isDarkMode
-                        ? "rgba(30, 41, 59, 0.7)"
-                        : "rgba(255, 255, 255, 0.7)",
-                      shadowColor: "#000",
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.1,
-                      shadowRadius: 4,
-                      elevation: 3,
-                    }}
-                  >
-                    <Ionicons name="heart" size={24} color="#EF4444" />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={handleSettingsPress}
-                    className="rounded-full p-3 shadow-sm"
-                    activeOpacity={0.7}
-                    style={{
-                      backgroundColor: isDarkMode
-                        ? "rgba(30, 41, 59, 0.7)"
-                        : "rgba(255, 255, 255, 0.7)",
-                      shadowColor: "#000",
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.1,
-                      shadowRadius: 4,
-                      elevation: 3,
-                    }}
-                  >
-                    <Ionicons
-                      name="settings-outline"
-                      size={24}
-                      color={seasonTheme.accentColor}
-                    />
-                  </TouchableOpacity>
+
+                  {/* Archives, Heart and Settings Icons */}
+                  <View className="flex-row items-center gap-3">
+                    <TouchableOpacity
+                      onPress={handleArchivesPress}
+                      className="rounded-full p-3 shadow-sm"
+                      activeOpacity={0.7}
+                      style={{
+                        backgroundColor: isDarkMode
+                          ? "rgba(30, 41, 59, 0.7)"
+                          : "rgba(255, 255, 255, 0.7)",
+                        shadowColor: "#000",
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.1,
+                        shadowRadius: 4,
+                        elevation: 3,
+                      }}
+                    >
+                      <Ionicons
+                        name="archive-outline"
+                        size={24}
+                        color={isDarkMode ? "#60A5FA" : "#3B82F6"}
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={handleLikedContentPress}
+                      className="rounded-full p-3 shadow-sm"
+                      activeOpacity={0.7}
+                      style={{
+                        backgroundColor: isDarkMode
+                          ? "rgba(30, 41, 59, 0.7)"
+                          : "rgba(255, 255, 255, 0.7)",
+                        shadowColor: "#000",
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.1,
+                        shadowRadius: 4,
+                        elevation: 3,
+                      }}
+                    >
+                      <Ionicons name="heart" size={24} color="#EF4444" />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={handleSettingsPress}
+                      className="rounded-full p-3 shadow-sm"
+                      activeOpacity={0.7}
+                      style={{
+                        backgroundColor: isDarkMode
+                          ? "rgba(30, 41, 59, 0.7)"
+                          : "rgba(255, 255, 255, 0.7)",
+                        shadowColor: "#000",
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.1,
+                        shadowRadius: 4,
+                        elevation: 3,
+                      }}
+                    >
+                      <Ionicons
+                        name="settings-outline"
+                        size={24}
+                        color={seasonTheme.accentColor}
+                      />
+                    </TouchableOpacity>
+                  </View>
                 </View>
 
                 {/* Swipe indicator at top */}
@@ -402,7 +439,7 @@ export default function HomeScreen({
                         letterSpacing: 1.5,
                       }}
                     >
-                      Swipe for today&apos;s facts
+                      {t("swipeForFacts")}
                     </Text>
                     <Text
                       style={{
@@ -466,7 +503,7 @@ export default function HomeScreen({
                       textShadowRadius: 4,
                     }}
                   >
-                    On This Day
+                    {t("onThisDay")}
                   </Text>
                   <Text
                     className="font-semibold text-center mt-3"
@@ -476,7 +513,7 @@ export default function HomeScreen({
                       color: isDarkMode ? "#94A3B8" : "#475569",
                     }}
                   >
-                    Real events that happened on this date in history
+                    {t("realEventsDescription")}
                   </Text>
                 </View>
 
@@ -490,7 +527,7 @@ export default function HomeScreen({
 
                 {todayData.popCulture.length > 0 && <Divider />}
                 <VerticalSection
-                  title="Pop Culture"
+                  title={t("popCulture")}
                   items={todayData.popCulture}
                   imagePath={require("@/assets/images/pop.png")}
                   gradientColors={["#EC4899", "#DB2777"]}
@@ -501,7 +538,7 @@ export default function HomeScreen({
 
                 {todayData.history.length > 0 && <Divider />}
                 <VerticalSection
-                  title="History"
+                  title={t("history")}
                   items={todayData.history}
                   imagePath={require("@/assets/images/history.png")}
                   gradientColors={["#3B82F6", "#1E40AF"]}
@@ -512,7 +549,7 @@ export default function HomeScreen({
 
                 {todayData.natureTech.length > 0 && <Divider />}
                 <VerticalSection
-                  title="Breakthroughs"
+                  title={t("breakthroughs")}
                   items={todayData.natureTech}
                   imagePath={require("@/assets/images/eureka.png")}
                   gradientColors={["#10B981", "#059669"]}
@@ -544,7 +581,7 @@ export default function HomeScreen({
                       opacity: 0.7,
                     }}
                   >
-                    Discover something new every day
+                    {t("discoverDaily")}
                   </Text>
                 </View>
               </View>
@@ -552,6 +589,13 @@ export default function HomeScreen({
           </View>
         </PagerView>
       </SafeAreaView>
+
+      {/* Language Selection Modal */}
+      <LanguageModal
+        visible={showLanguageModal}
+        onClose={() => setShowLanguageModal(false)}
+        isDarkMode={isDarkMode}
+      />
     </View>
   );
 }

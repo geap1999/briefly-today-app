@@ -1,4 +1,5 @@
 import WarningModal from "@/components/ui/warning-modal";
+import { useLocale } from "@/contexts/locale-context";
 import { useTheme } from "@/contexts/theme-context";
 import { getArchives } from "@/services/supabase/scoop";
 import {
@@ -46,6 +47,7 @@ interface ArchivesScreenProps {
 
 export default function ArchivesScreen({ onBack }: ArchivesScreenProps) {
   const { isDarkMode } = useTheme();
+  const { t } = useLocale();
   const [archives, setArchives] = useState<ArchiveScoop[]>([]);
   const [loading, setLoading] = useState(true);
   const { isTablet } = useResponsive();
@@ -107,9 +109,9 @@ export default function ArchivesScreen({ onBack }: ArchivesScreenProps) {
     yesterday.setDate(yesterday.getDate() - 1);
 
     if (date.toDateString() === today.toDateString()) {
-      return "Today";
+      return t("today");
     } else if (date.toDateString() === yesterday.toDateString()) {
-      return "Yesterday";
+      return t("yesterday");
     } else {
       return date.toLocaleDateString("en-US", {
         weekday: "long",
@@ -170,7 +172,7 @@ export default function ArchivesScreen({ onBack }: ArchivesScreenProps) {
                   color: isDarkMode ? "#fff" : "#1F2937",
                 }}
               >
-                Archives
+                {t("archives")}
               </Text>
             </View>
 
@@ -191,7 +193,7 @@ export default function ArchivesScreen({ onBack }: ArchivesScreenProps) {
                     textAlign: "center",
                   }}
                 >
-                  No archived scoops available yet
+                  {t("noArchivedScoops")}
                 </Text>
               </View>
             ) : (
