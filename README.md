@@ -1,6 +1,6 @@
 # Briefly Today
 
-**Briefly Today** is a mobile app that delivers interesting facts and notable events that happened on this date in history, every day. In addition to historical facts, the app features a "Scoop of the Day" section highlighting real-time, current events.
+**Briefly Today** is a mobile app that delivers interesting facts and notable events that happened on this date in history, every day. In addition to historical facts, the app features a "Scoop of the Day" section highlighting real-time, current events (https://play.google.com/store/apps/details?id=com.geap.brieflytoday).
 
 ## Features
 
