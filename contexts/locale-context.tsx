@@ -24,7 +24,6 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
   const [isInitialized, setIsInitialized] = useState(false);
   const { isFrance, isLoading: isTimezoneLoading } = useTimezone();
 
-  // Initialiser la langue au démarrage
   useEffect(() => {
     if (!isTimezoneLoading && !isInitialized) {
       initializeLocale();
@@ -36,15 +35,12 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
       const savedLocale = await AsyncStorage.getItem(LOCALE_STORAGE_KEY);
 
       if (savedLocale) {
-        // Si une langue a déjà été sauvegardée, l'utiliser
         changeLanguage(savedLocale);
         setLocaleState(savedLocale);
       } else {
-        // Sinon, détecter automatiquement selon la région
         const detectedLocale = isFrance ? "fr" : "en";
         changeLanguage(detectedLocale);
         setLocaleState(detectedLocale);
-        // Sauvegarder la détection automatique
         await AsyncStorage.setItem(LOCALE_STORAGE_KEY, detectedLocale);
       }
 
@@ -57,13 +53,8 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
 
   const setLocale = useCallback(async (newLocale: string) => {
     try {
-      // Changer la langue dans i18n
       changeLanguage(newLocale);
-
-      // Sauvegarder dans AsyncStorage
       await AsyncStorage.setItem(LOCALE_STORAGE_KEY, newLocale);
-
-      // Mettre à jour l'état
       setLocaleState(newLocale);
     } catch (error) {
       console.error("Error setting locale:", error);
@@ -75,7 +66,7 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
       return i18n.t(key, params);
     },
     [locale],
-  ); // Re-créer quand locale change pour forcer le re-render
+  );
 
   return (
     <LocaleContext.Provider value={{ locale, setLocale, t }}>

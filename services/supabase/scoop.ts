@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "./supabase-client";
 
 const ARCHIVES_KEY = "scoops_archive";
+const LOCALE_STORAGE_KEY = "@app_locale";
 const MAX_ARCHIVES = 5;
 
 interface ArchivedScoop {
@@ -19,7 +20,13 @@ interface ArchivedScoop {
 
 export const getScoop = async (region: Region = "US") => {
   try {
-    const tableName = region === "EU" ? "current_scoop_eu" : "current_scoop";
+    let tableName = region === "EU" ? "current_scoop_eu" : "current_scoop";
+
+    const lang = await AsyncStorage.getItem(LOCALE_STORAGE_KEY);
+    if (lang === "fr") {
+      tableName = "current_scoop_fr";
+    }
+
     const { data, error } = await supabase
       .from(tableName)
       .select("*")
