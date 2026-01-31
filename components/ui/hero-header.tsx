@@ -1,12 +1,13 @@
+import { useLocale } from "@/contexts/locale-context";
 import { getFontSize, moderateScale, useResponsive } from "@/utils/responsive";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { Text, View } from "react-native";
 import Animated, {
-    Extrapolation,
-    FadeInDown,
-    interpolate,
-    useAnimatedStyle,
+  Extrapolation,
+  FadeInDown,
+  interpolate,
+  useAnimatedStyle,
 } from "react-native-reanimated";
 
 interface Props {
@@ -16,33 +17,30 @@ interface Props {
   isDarkMode?: boolean;
 }
 
-export default function HeroHeader({
-  dateInfo,
-  todayData,
-  scrollY,
-}: Props) {
+export default function HeroHeader({ dateInfo, todayData, scrollY }: Props) {
   const { isTablet } = useResponsive();
+  const { t, locale } = useLocale();
 
   const headerAnimatedStyle = useAnimatedStyle(() => {
     const opacity = interpolate(
       scrollY.value,
       [0, 150, 250],
       [1, 0.5, 0],
-      Extrapolation.CLAMP
+      Extrapolation.CLAMP,
     );
 
     const scale = interpolate(
       scrollY.value,
       [0, 150],
       [1, 0.95],
-      Extrapolation.CLAMP
+      Extrapolation.CLAMP,
     );
 
     const translateY = interpolate(
       scrollY.value,
       [0, 250],
       [0, -20],
-      Extrapolation.CLAMP
+      Extrapolation.CLAMP,
     );
 
     return {
@@ -115,7 +113,9 @@ export default function HeroHeader({
               className="font-black text-white mb-1 tracking-tight"
               style={{ fontSize: getFontSize(36), letterSpacing: -1 }}
             >
-              {dateInfo.dayOfWeek}
+              {dateInfo.dayOfWeek
+                ? t(`dayOfWeek.${dateInfo.dayOfWeek.toLowerCase()}`)
+                : ""}
             </Text>
 
             {todayData.special ? (
@@ -131,7 +131,8 @@ export default function HeroHeader({
                 <Text
                   className="font-bold text-yellow-300 text-center"
                   style={{
-                    fontSize: getFontSize(20),
+                    fontSize:
+                      locale === "fr" ? getFontSize(18) : getFontSize(20),
                     textShadowColor: "rgba(0,0,0,0.3)",
                     textShadowOffset: { width: 0, height: 2 },
                     textShadowRadius: 8,
@@ -158,7 +159,7 @@ export default function HeroHeader({
                     className="font-bold text-yellow-200 uppercase text-center mb-1.5"
                     style={{ fontSize: getFontSize(9), letterSpacing: 2 }}
                   >
-                    ✝️ Saint of the Day
+                    ✝️ {t("saintOfTheDay")}
                   </Text>
                   <Text
                     className="font-semibold text-white/95 text-center px-4"

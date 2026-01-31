@@ -1,3 +1,5 @@
+import LanguageSelector from "@/components/ui/language-selector";
+import { useLocale } from "@/contexts/locale-context";
 import { useTheme } from "@/contexts/theme-context";
 import {
   getFontSize,
@@ -24,6 +26,7 @@ interface SettingsScreenProps {
 
 export default function SettingsScreen({ onBack }: SettingsScreenProps) {
   const { isDarkMode, setThemeMode } = useTheme();
+  const { t } = useLocale();
   const horizontalPadding = getHorizontalPadding();
   const maxContentWidth = getMaxContentWidth();
 
@@ -40,21 +43,21 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
   const handlePrivacyPolicyPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     Linking.openURL(
-      "https://doc-hosting.flycricket.io/briefly-today/0cb5694f-700a-4bb5-9b1b-9282afe463e1/privacy"
+      "https://doc-hosting.flycricket.io/briefly-today/0cb5694f-700a-4bb5-9b1b-9282afe463e1/privacy",
     );
   };
 
   const handleTermsPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     Linking.openURL(
-      "https://doc-hosting.flycricket.io/briefly-today-tc/7b7ab7da-bd21-4a69-bcf6-05084d1dc55f/terms"
+      "https://doc-hosting.flycricket.io/briefly-today-tc/7b7ab7da-bd21-4a69-bcf6-05084d1dc55f/terms",
     );
   };
 
   const handleContactPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     Linking.openURL(
-      "mailto:guillaumeeap@gmail.com?subject=Briefly Today Feedback"
+      "mailto:guillaumeeap@gmail.com?subject=Briefly Today Feedback",
     );
   };
 
@@ -110,7 +113,7 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
                   letterSpacing: -0.5,
                 }}
               >
-                Settings
+                {t("settings")}
               </Text>
             </View>
 
@@ -132,7 +135,7 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
                     color: isDarkMode ? "#F1F5F9" : "#1E293B",
                   }}
                 >
-                  Appearance
+                  {t("appearance")}
                 </Text>
 
                 <View className="flex-row items-center justify-between">
@@ -144,7 +147,7 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
                         color: isDarkMode ? "#E2E8F0" : "#334155",
                       }}
                     >
-                      Dark Mode
+                      {t("darkMode")}
                     </Text>
                   </View>
                   <Switch
@@ -153,6 +156,11 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
                     trackColor={{ false: "#CBD5E1", true: "#93C5FD" }}
                     thumbColor={isDarkMode ? "#3B82F6" : "#F1F5F9"}
                   />
+                </View>
+
+                {/* Language Selector */}
+                <View className="mt-4">
+                  <LanguageSelector isDarkMode={isDarkMode} />
                 </View>
               </View>
 
@@ -171,7 +179,7 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
                     color: isDarkMode ? "#F1F5F9" : "#1E293B",
                   }}
                 >
-                  Legal
+                  {t("legal")}
                 </Text>
 
                 <TouchableOpacity
@@ -186,7 +194,7 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
                       color: isDarkMode ? "#E2E8F0" : "#334155",
                     }}
                   >
-                    Privacy Policy
+                    {t("privacyPolicy")}
                   </Text>
                   <Ionicons
                     name="chevron-forward"
@@ -207,7 +215,7 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
                       color: isDarkMode ? "#E2E8F0" : "#334155",
                     }}
                   >
-                    Terms of Service
+                    {t("termsOfService")}
                   </Text>
                   <Ionicons
                     name="chevron-forward"
@@ -232,7 +240,7 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
                     color: isDarkMode ? "#F1F5F9" : "#1E293B",
                   }}
                 >
-                  About
+                  {t("about")}
                 </Text>
 
                 <View className="py-2">
@@ -243,7 +251,7 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
                       color: isDarkMode ? "#E2E8F0" : "#334155",
                     }}
                   >
-                    Version
+                    {t("version")}
                   </Text>
                   <Text
                     style={{
@@ -251,7 +259,7 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
                       color: isDarkMode ? "#94A3B8" : "#64748B",
                     }}
                   >
-                    1.3.4
+                    1.4.0
                   </Text>
                 </View>
               </View>
@@ -273,7 +281,7 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
                   color: isDarkMode ? "#E2E8F0" : "#334155",
                 }}
               >
-                Have any errors or suggestions?
+                {t("contactMessage")}
               </Text>
               <TouchableOpacity
                 onPress={handleContactPress}
@@ -291,7 +299,7 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
                   className="text-white font-bold text-center"
                   style={{ fontSize: getFontSize(16) }}
                 >
-                  Contact Us
+                  {t("contactUs")}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -305,7 +313,7 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
                   color: isDarkMode ? "#94A3B8" : "#64748B",
                 }}
               >
-                Made for those who come after
+                {t("madeForMessage")}
               </Text>
             </View>
           </View>

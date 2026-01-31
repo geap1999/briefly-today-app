@@ -1,8 +1,13 @@
 import { getCachedData, setCachedData } from "@/utils/cache";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "./supabase-client";
 
+const LOCALE_STORAGE_KEY = "@app_locale";
+
 export const getDailyFacts = async (month_num: number, day_num: number) => {
-  const cacheKey = `cache_daily_facts_${month_num}_${day_num}`;
+  const lang = await AsyncStorage.getItem(LOCALE_STORAGE_KEY);
+  const locale = lang || "en";
+  const cacheKey = `cache_daily_facts_${locale}_${month_num}_${day_num}`;
 
   try {
     const cachedData = await getCachedData(cacheKey);
@@ -14,8 +19,10 @@ export const getDailyFacts = async (month_num: number, day_num: number) => {
   }
 
   try {
+    const tableName = locale !== "fr" ? "daily_data" : "daily_data_fr";
+
     const { data, error } = await supabase
-      .from("daily_data")
+      .from(tableName)
       .select("*")
       .match({ month_num, day_num });
 

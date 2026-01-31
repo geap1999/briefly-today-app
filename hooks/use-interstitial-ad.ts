@@ -11,7 +11,7 @@ export function useInterstitialAd(
   setAdLoaded: (v: boolean) => void,
   fetchDailyScoop: () => Promise<void>,
   onAdClosed?: () => void,
-  timezone = "America/Chicago"
+  timezone = "America/Chicago",
 ) {
   useEffect(() => {
     const setupAd = async () => {

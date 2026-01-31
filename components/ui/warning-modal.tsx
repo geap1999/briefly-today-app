@@ -1,3 +1,4 @@
+import { useLocale } from "@/contexts/locale-context";
 import { getFontSize, useResponsive } from "@/utils/responsive";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -18,6 +19,7 @@ export default function WarningModal({
   isDarkMode = false,
 }: WarningModalProps) {
   const { isTablet } = useResponsive();
+  const { t } = useLocale();
 
   const handleClose = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -80,7 +82,7 @@ export default function WarningModal({
                 letterSpacing: -0.3,
               }}
             >
-              Limit Reached
+              {t("warningModal.limitReached")}
             </Text>
             <Text
               className="text-center leading-relaxed"
@@ -89,9 +91,7 @@ export default function WarningModal({
                 color: isDarkMode ? "#CBD5E1" : "#475569",
               }}
             >
-              You have reached the maximum capacity of 20 likes for{" "}
-              <Text className="font-bold">{category}</Text>. Please remove some
-              existing likes before adding new ones.
+              {t("warningModal.limitMessage", { category })}
             </Text>
           </View>
 
@@ -111,7 +111,7 @@ export default function WarningModal({
                 fontSize: getFontSize(16),
               }}
             >
-              Got it
+              {t("warningModal.understood")}
             </Text>
           </TouchableOpacity>
         </View>
