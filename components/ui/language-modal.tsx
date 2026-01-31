@@ -1,5 +1,6 @@
 import { useLocale } from "@/contexts/locale-context";
 import { getFontSize, useResponsive } from "@/utils/responsive";
+import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import React from "react";
 import { Modal, Pressable, Text, TouchableOpacity, View } from "react-native";
@@ -82,6 +83,25 @@ export default function LanguageModal({
               elevation: 8,
             }}
           >
+            {/* Close Button X - Top Right */}
+            <TouchableOpacity
+              onPress={handleClose}
+              activeOpacity={0.7}
+              style={{
+                position: "absolute",
+                top: isTablet ? 20 : 16,
+                right: isTablet ? 20 : 16,
+                zIndex: 10,
+                padding: 8,
+              }}
+            >
+              <Ionicons
+                name="close-circle"
+                size={isTablet ? 32 : 28}
+                color={isDarkMode ? "#94A3B8" : "#64748B"}
+              />
+            </TouchableOpacity>
+
             {/* Header */}
             <View className="items-center mb-6">
               <View
@@ -201,30 +221,6 @@ export default function LanguageModal({
                 );
               })}
             </View>
-
-            {/* Close Button */}
-            <TouchableOpacity
-              onPress={handleClose}
-              activeOpacity={0.8}
-              style={{
-                backgroundColor: isDarkMode
-                  ? "rgba(51, 65, 85, 0.5)"
-                  : "#E2E8F0",
-                paddingVertical: isTablet ? 16 : 14,
-                borderRadius: isTablet ? 16 : 12,
-                marginTop: 8,
-              }}
-            >
-              <Text
-                className="font-bold text-center"
-                style={{
-                  fontSize: getFontSize(16),
-                  color: isDarkMode ? "#E2E8F0" : "#475569",
-                }}
-              >
-                {t("close")}
-              </Text>
-            </TouchableOpacity>
           </View>
         </Pressable>
       </Pressable>

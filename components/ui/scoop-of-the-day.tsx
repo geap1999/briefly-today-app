@@ -1,3 +1,5 @@
+import { useLocale } from "@/contexts/locale-context";
+import { useTimezone } from "@/contexts/timezone-context";
 import {
   getLikedFactsCountByCategory,
   isFactLiked,
@@ -11,12 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
-import {
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import Animated, {
   FadeIn,
   FadeInUp,
@@ -26,7 +23,6 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import WarningModal from "./warning-modal";
-import { useTimezone } from "@/contexts/timezone-context";
 
 interface Props {
   currentTime: any;
@@ -35,6 +31,10 @@ interface Props {
   onScoopPress: () => void;
   isDarkMode?: boolean;
   timezone?: string;
+  scrollToScoop?: () => void;
+  scrollViewRef?: any;
+  scoopOpen: boolean;
+  setScoopOpen: (open: boolean) => void;
 }
 
 export default function ScoopOfTheDay({
@@ -44,13 +44,19 @@ export default function ScoopOfTheDay({
   onScoopPress,
   isDarkMode = false,
   timezone = "America/Chicago",
+  scrollToScoop,
+  scrollViewRef,
+  scoopOpen,
+  setScoopOpen,
 }: Props) {
   const { isTablet } = useResponsive();
+  const { t } = useLocale();
   const countdown = getScoopCountdown(currentTime, timezone);
   const [isLiked, setIsLiked] = useState(false);
   const [showWarningModal, setShowWarningModal] = useState(false);
   const { region } = useTimezone();
-  
+  const prevRevealed = React.useRef(isScoopRevealed);
+
   useEffect(() => {
     const checkLikedStatus = async () => {
       if (scoop && scoop.title) {
@@ -60,6 +66,14 @@ export default function ScoopOfTheDay({
     };
     checkLikedStatus();
   }, [scoop]);
+
+  // Auto-open when scoop becomes revealed (after ad)
+  useEffect(() => {
+    if (!prevRevealed.current && isScoopRevealed && scoop) {
+      setScoopOpen(true);
+    }
+    prevRevealed.current = isScoopRevealed;
+  }, [isScoopRevealed, scoop]);
 
   const handleLike = async (e: any) => {
     e.stopPropagation();
@@ -107,7 +121,7 @@ export default function ScoopOfTheDay({
   const imageSize = isTablet ? 60 : 45;
   const imageHeight = isTablet ? moderateScale(240) : moderateScale(180);
 
-  if (isScoopRevealed && scoop) {
+  if (isScoopRevealed && scoop && scoopOpen) {
     return (
       <Animated.View entering={FadeIn.duration(400)} className="my-4">
         <WarningModal
@@ -142,24 +156,51 @@ export default function ScoopOfTheDay({
                       color: isDarkMode ? "#C084FC" : "#9333EA",
                     }}
                   >
-                    Today&apos;s Scoop
+                    {t("todaysScoop")}
                   </Text>
                 </View>
-                <TouchableOpacity
-                  onPress={handleLike}
-                  activeOpacity={0.7}
-                  style={{
-                    padding: isTablet ? 8 : 6,
-                  }}
-                >
-                  <Ionicons
-                    name={isLiked ? "heart" : "heart-outline"}
-                    size={isTablet ? 28 : 24}
-                    color={
-                      isLiked ? "#EF4444" : isDarkMode ? "#94A3B8" : "#64748B"
-                    }
-                  />
-                </TouchableOpacity>
+                <View className="flex-row items-center gap-2">
+                  <TouchableOpacity
+                    onPress={handleLike}
+                    activeOpacity={0.7}
+                    style={{
+                      padding: isTablet ? 8 : 6,
+                    }}
+                  >
+                    <Ionicons
+                      name={isLiked ? "heart" : "heart-outline"}
+                      size={isTablet ? 28 : 24}
+                      color={
+                        isLiked ? "#EF4444" : isDarkMode ? "#94A3B8" : "#64748B"
+                      }
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={(e) => {
+                      e.stopPropagation();
+                      setScoopOpen(false);
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      if (scrollToScoop) {
+                        setTimeout(() => {
+                          scrollViewRef?.current?.scrollTo({
+                            y: 0,
+                            animated: true,
+                          });
+                        }, 100);
+                      }
+                    }}
+                    activeOpacity={0.7}
+                    style={{
+                      padding: isTablet ? 8 : 6,
+                    }}
+                  >
+                    <Ionicons
+                      name="close-circle"
+                      size={isTablet ? 28 : 24}
+                      color={isDarkMode ? "#94A3B8" : "#64748B"}
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
 
               {scoop.image_url && (
@@ -240,7 +281,7 @@ export default function ScoopOfTheDay({
                       color: isDarkMode ? "#C084FC" : "#9333EA",
                     }}
                   >
-                    Read more
+                    {t("readMore")}
                   </Text>
                   <Text
                     style={{
@@ -278,12 +319,26 @@ export default function ScoopOfTheDay({
           numberOfLines={2}
           ellipsizeMode="tail"
         >
-          Scoop of the Day
+          {t("scoopOfTheDay")}
         </Text>
       </View>
 
-      {!isScoopRevealed && countdown.isPast7PM ? (
-        <TouchableOpacity activeOpacity={0.9} onPress={onScoopPress}>
+      {(!isScoopRevealed && countdown.isPast7PM) ||
+        (isScoopRevealed && scoop && !scoopOpen) ? (
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={
+            !isScoopRevealed
+              ? onScoopPress
+              : () => {
+                  setScoopOpen(true);
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  if (scrollToScoop) {
+                    setTimeout(() => scrollToScoop(), 300);
+                  }
+                }
+          }
+        >
           <View className="relative overflow-hidden rounded-[28px]">
             <LinearGradient
               colors={["#FFD580", "#FF9900", "#FF7300"]}
@@ -301,10 +356,10 @@ export default function ScoopOfTheDay({
                   resizeMode="contain"
                 />
                 <Text className="text-3xl font-black text-white mb-3 text-center tracking-tight">
-                  Scoop Delivered!
+                  {t("scoopReady")}
                 </Text>
                 <Text className="text-lg font-semibold text-purple-100 text-center">
-                  Tap to reveal your exclusive scoop
+                  {t("tapToReveal")}
                 </Text>
               </View>
             </LinearGradient>
@@ -326,7 +381,7 @@ export default function ScoopOfTheDay({
                 resizeMode="contain"
               />
               <Text className="text-sm font-semibold text-purple-700 uppercase tracking-[2px] mb-6">
-                Unlocks at 7:00 PM {region === "US" ? "CT" : "CET"}
+                {t("unlocksAt")} {region === "US" ? "CT" : "CET"}
               </Text>
               <View
                 className="flex-row items-center gap-3"
@@ -337,7 +392,7 @@ export default function ScoopOfTheDay({
                     {String(countdown.hours).padStart(2, "0")}
                   </Text>
                   <Text className="text-2xs font-semibold text-purple-600 uppercase mt-1 tracking-wide">
-                    Hours
+                    {t("hours")}
                   </Text>
                 </View>
                 <Text className="text-2xl font-black text-purple-400">:</Text>
@@ -346,7 +401,7 @@ export default function ScoopOfTheDay({
                     {String(countdown.minutes).padStart(2, "0")}
                   </Text>
                   <Text className="text-2xs font-semibold text-purple-600 uppercase mt-1 tracking-wide">
-                    Minutes
+                    {t("minutes")}
                   </Text>
                 </View>
                 <Text className="text-2xl font-black text-purple-400">:</Text>
@@ -355,7 +410,7 @@ export default function ScoopOfTheDay({
                     {String(countdown.seconds).padStart(2, "0")}
                   </Text>
                   <Text className="text-2xs font-semibold text-purple-600 uppercase mt-1 tracking-wide">
-                    Seconds
+                    {t("seconds")}
                   </Text>
                 </View>
               </View>

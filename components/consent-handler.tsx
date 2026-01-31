@@ -1,3 +1,4 @@
+import { useLocale } from "@/contexts/locale-context";
 import { useTimezone } from "@/contexts/timezone-context";
 import {
   registerPushToken,
@@ -25,6 +26,7 @@ interface ConsentHandlerProps {
 
 export default function ConsentHandler({ children }: ConsentHandlerProps) {
   const { region, isLoading: isTimezoneLoading } = useTimezone();
+  const { t } = useLocale();
   const [canStartApp, setCanStartApp] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -171,7 +173,7 @@ export default function ConsentHandler({ children }: ConsentHandlerProps) {
           style={[{ width: 80, height: 80 }, floatAnimation]}
           resizeMode="contain"
         />
-        <Text className="mt-4 text-gray-600 font-semibold">Loading...</Text>
+        <Text className="mt-4 text-gray-600 font-semibold">{t("loading")}</Text>
         {error && (
           <Text className="mt-2 text-red-500 text-xs px-4 text-center">
             {error}

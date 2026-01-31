@@ -1,5 +1,6 @@
 import CelebritiesCarousel from "@/components/ui/celebrities-carousel";
 import Divider from "@/components/ui/divider";
+import DropdownMenu from "@/components/ui/dropdown-menu";
 import EmptyState from "@/components/ui/empty-state";
 import HeroHeader from "@/components/ui/hero-header";
 import LanguageModal from "@/components/ui/language-modal";
@@ -136,6 +137,7 @@ export default function HomeScreen({
   const [adLoaded, setAdLoaded] = useState(false);
   const [isScoopRevealed, setIsScoopRevealed] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
+  const [scoopOpen, setScoopOpen] = useState(false);
 
   useMidnightRefresh(refreshData, setIsScoopRevealed, timezone);
 
@@ -195,6 +197,13 @@ export default function HomeScreen({
     fetchDailyScoop();
   }, []);
 
+  useEffect(() => {
+    if (locale) {
+      refreshData();
+      fetchDailyScoop();
+    }
+  }, [locale]);
+
   // Signal when initial data is loaded
   useEffect(() => {
     if (!loading && dateInfo.dayOfWeek && onDataLoaded) {
@@ -203,7 +212,8 @@ export default function HomeScreen({
   }, [loading, dateInfo.dayOfWeek, onDataLoaded]);
 
   // Padding to allow header to disappear only when scoop is revealed and loaded
-  const dynamicPaddingBottom = isScoopRevealed && scoop && !loading ? 180 : 40;
+  const dynamicPaddingBottom =
+    isScoopRevealed && scoop && !loading && scoopOpen ? 180 : 40;
 
   const handleScoopPress = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -250,9 +260,6 @@ export default function HomeScreen({
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setShowLanguageModal(true);
   };
-
-  // Get current flag based on locale
-  const currentFlag = locale === "fr" ? "🇫🇷" : "🇺🇸";
 
   return (
     <View className="flex-1">
@@ -333,91 +340,57 @@ export default function HomeScreen({
                       : undefined,
                 }}
               >
-                {/* Language Flag Icon - Top Left */}
-                <View className="flex-row items-center justify-between mb-3">
-                  <TouchableOpacity
-                    onPress={handleLanguagePress}
-                    className="rounded-full shadow-sm"
-                    activeOpacity={0.7}
-                    style={{
-                      backgroundColor: isDarkMode
-                        ? "rgba(30, 41, 59, 0.7)"
-                        : "rgba(255, 255, 255, 0.7)",
-                      shadowColor: "#000",
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.1,
-                      shadowRadius: 4,
-                      elevation: 3,
-                      width: 52,
-                      height: 52,
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Text style={{ fontSize: 28 }}>{currentFlag}</Text>
-                  </TouchableOpacity>
+                {/* Header with Archives, Liked Content and Menu */}
+                <View className="flex-row items-center justify-end mb-3">
+                  <View className="flex-row items-center gap-0">
+                    {/* Icons group */}
+                    <View className="flex-row items-center gap-3">
+                      <TouchableOpacity
+                        onPress={handleArchivesPress}
+                        className="rounded-full p-3 shadow-sm"
+                        activeOpacity={0.7}
+                        style={{
+                          backgroundColor: isDarkMode
+                            ? "rgba(30, 41, 59, 0.7)"
+                            : "rgba(255, 255, 255, 0.7)",
+                          shadowColor: "#000",
+                          shadowOffset: { width: 0, height: 2 },
+                          shadowOpacity: 0.1,
+                          shadowRadius: 4,
+                          elevation: 3,
+                        }}
+                      >
+                        <Ionicons
+                          name="archive-outline"
+                          size={24}
+                          color={isDarkMode ? "#60A5FA" : "#3B82F6"}
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={handleLikedContentPress}
+                        className="rounded-full p-3 shadow-sm"
+                        activeOpacity={0.7}
+                        style={{
+                          backgroundColor: isDarkMode
+                            ? "rgba(30, 41, 59, 0.7)"
+                            : "rgba(255, 255, 255, 0.7)",
+                          shadowColor: "#000",
+                          shadowOffset: { width: 0, height: 2 },
+                          shadowOpacity: 0.1,
+                          shadowRadius: 4,
+                          elevation: 3,
+                        }}
+                      >
+                        <Ionicons name="heart" size={24} color="#EF4444" />
+                      </TouchableOpacity>
+                    </View>
 
-                  {/* Archives, Heart and Settings Icons */}
-                  <View className="flex-row items-center gap-3">
-                    <TouchableOpacity
-                      onPress={handleArchivesPress}
-                      className="rounded-full p-3 shadow-sm"
-                      activeOpacity={0.7}
-                      style={{
-                        backgroundColor: isDarkMode
-                          ? "rgba(30, 41, 59, 0.7)"
-                          : "rgba(255, 255, 255, 0.7)",
-                        shadowColor: "#000",
-                        shadowOffset: { width: 0, height: 2 },
-                        shadowOpacity: 0.1,
-                        shadowRadius: 4,
-                        elevation: 3,
-                      }}
-                    >
-                      <Ionicons
-                        name="archive-outline"
-                        size={24}
-                        color={isDarkMode ? "#60A5FA" : "#3B82F6"}
-                      />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={handleLikedContentPress}
-                      className="rounded-full p-3 shadow-sm"
-                      activeOpacity={0.7}
-                      style={{
-                        backgroundColor: isDarkMode
-                          ? "rgba(30, 41, 59, 0.7)"
-                          : "rgba(255, 255, 255, 0.7)",
-                        shadowColor: "#000",
-                        shadowOffset: { width: 0, height: 2 },
-                        shadowOpacity: 0.1,
-                        shadowRadius: 4,
-                        elevation: 3,
-                      }}
-                    >
-                      <Ionicons name="heart" size={24} color="#EF4444" />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={handleSettingsPress}
-                      className="rounded-full p-3 shadow-sm"
-                      activeOpacity={0.7}
-                      style={{
-                        backgroundColor: isDarkMode
-                          ? "rgba(30, 41, 59, 0.7)"
-                          : "rgba(255, 255, 255, 0.7)",
-                        shadowColor: "#000",
-                        shadowOffset: { width: 0, height: 2 },
-                        shadowOpacity: 0.1,
-                        shadowRadius: 4,
-                        elevation: 3,
-                      }}
-                    >
-                      <Ionicons
-                        name="settings-outline"
-                        size={24}
-                        color={seasonTheme.accentColor}
-                      />
-                    </TouchableOpacity>
+                    {/* Dropdown Menu */}
+                    <DropdownMenu
+                      onLanguagePress={handleLanguagePress}
+                      onSettingsPress={handleSettingsPress}
+                      isDarkMode={isDarkMode}
+                    />
                   </View>
                 </View>
 
@@ -466,6 +439,10 @@ export default function HomeScreen({
                   timezone={timezone}
                   onScoopPress={handleScoopPress}
                   isDarkMode={isDarkMode}
+                  scrollToScoop={scrollToScoop}
+                  scrollViewRef={scrollViewRef}
+                  scoopOpen={scoopOpen}
+                  setScoopOpen={setScoopOpen}
                 />
               </View>
             </Animated.ScrollView>

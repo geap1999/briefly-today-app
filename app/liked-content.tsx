@@ -3,22 +3,22 @@ import { useTheme } from "@/contexts/theme-context";
 import { useTimezone } from "@/contexts/timezone-context";
 import { getLikedFacts, LikedFact, unlikeFact } from "@/utils/liked-facts";
 import {
-    getFontSize,
-    getHorizontalPadding,
-    getMaxContentWidth,
-    useResponsive,
+  getFontSize,
+  getHorizontalPadding,
+  getMaxContentWidth,
+  useResponsive,
 } from "@/utils/responsive";
 import { handleOpenArticle } from "@/utils/utils";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Image,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import "../global.css";
@@ -429,7 +429,7 @@ export default function LikedContentScreen({
                                 letterSpacing: 0.3,
                               }}
                             >
-                              Learn more
+                              {t("learnMore")}
                             </Text>
                           </View>
                         </View>

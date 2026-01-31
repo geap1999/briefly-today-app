@@ -32,9 +32,9 @@ export default function App() {
   if (!appIsReady) {
     return (
       <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-        <LocaleProvider>
-          <ThemeProvider>
-            <TimezoneProvider>
+        <TimezoneProvider>
+          <LocaleProvider>
+            <ThemeProvider>
               <ConsentHandler>
                 <HomeScreen
                   onSettingsPress={() => setShowSettings(true)}
@@ -43,18 +43,18 @@ export default function App() {
                   onDataLoaded={() => setAppIsReady(true)}
                 />
               </ConsentHandler>
-            </TimezoneProvider>
-          </ThemeProvider>
-        </LocaleProvider>
+            </ThemeProvider>
+          </LocaleProvider>
+        </TimezoneProvider>
       </View>
     );
   }
 
   return (
     <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-      <LocaleProvider>
-        <ThemeProvider>
-          <TimezoneProvider>
+      <TimezoneProvider>
+        <LocaleProvider>
+          <ThemeProvider>
             <ConsentHandler>
               {showSettings ? (
                 <SettingsScreen onBack={() => setShowSettings(false)} />
@@ -71,9 +71,9 @@ export default function App() {
                 />
               )}
             </ConsentHandler>
-          </TimezoneProvider>
-        </ThemeProvider>
-      </LocaleProvider>
+          </ThemeProvider>
+        </LocaleProvider>
+      </TimezoneProvider>
     </View>
   );
 }

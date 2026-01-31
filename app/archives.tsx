@@ -165,15 +165,22 @@ export default function ArchivesScreen({ onBack }: ArchivesScreenProps) {
                   color={isDarkMode ? "#fff" : "#000"}
                 />
               </TouchableOpacity>
-              <Text
-                style={{
-                  fontSize: getFontSize(28),
-                  fontWeight: "bold",
-                  color: isDarkMode ? "#fff" : "#1F2937",
-                }}
-              >
-                {t("archives")}
-              </Text>
+              <View className="flex-row items-center flex-1">
+                <Text
+                  style={{
+                    fontSize: getFontSize(28),
+                    fontWeight: "bold",
+                    color: isDarkMode ? "#fff" : "#1F2937",
+                  }}
+                >
+                  {t("archives")}
+                </Text>
+                <Image
+                  source={require("@/assets/images/reading.png")}
+                  style={{ width: 60, height: 60, marginLeft: 5 }}
+                  resizeMode="contain"
+                />
+              </View>
             </View>
 
             {/* Content */}
@@ -302,7 +309,7 @@ export default function ArchivesScreen({ onBack }: ArchivesScreenProps) {
                                 fontWeight: "600",
                               }}
                             >
-                              Read more
+                              {t("readMore")}
                             </Text>
                             <Ionicons
                               name="arrow-forward"

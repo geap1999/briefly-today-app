@@ -1,3 +1,4 @@
+import { useLocale } from "@/contexts/locale-context";
 import {
   getLikedFactsCountByCategory,
   isFactLiked,
@@ -29,6 +30,7 @@ export default function CelebritiesCarousel({
   isDarkMode = false,
 }: Props) {
   const { width, isTablet } = useResponsive();
+  const { t } = useLocale();
   const [likedFacts, setLikedFacts] = useState<Set<string>>(new Set());
   const [showWarningModal, setShowWarningModal] = useState(false);
 
@@ -108,7 +110,7 @@ export default function CelebritiesCarousel({
               color: isDarkMode ? "#F1F5F9" : "#1E293B",
             }}
           >
-            Famous Birthdays
+            {t("famousBirthdays")}
           </Text>
         </View>
         <View className="flex-row items-center gap-1.5">
@@ -120,7 +122,7 @@ export default function CelebritiesCarousel({
               color: isDarkMode ? "#94A3B8" : "#64748B",
             }}
           >
-            Swipe
+            {t("swipe")}
           </Text>
           <Text
             style={{
@@ -215,7 +217,7 @@ export default function CelebritiesCarousel({
                         className="font-semibold text-white"
                         style={{ fontSize: getFontSize(14) }}
                       >
-                        Learn more
+                        {t("learnMore")}
                       </Text>
                     </View>
                     <TouchableOpacity
