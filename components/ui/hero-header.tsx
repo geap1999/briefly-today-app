@@ -4,10 +4,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { Text, View } from "react-native";
 import Animated, {
-  Extrapolation,
-  FadeInDown,
-  interpolate,
-  useAnimatedStyle,
+    Extrapolation,
+    FadeInDown,
+    interpolate,
+    useAnimatedStyle,
 } from "react-native-reanimated";
 
 interface Props {
@@ -113,9 +113,7 @@ export default function HeroHeader({ dateInfo, todayData, scrollY }: Props) {
               className="font-black text-white mb-1 tracking-tight"
               style={{ fontSize: getFontSize(36), letterSpacing: -1 }}
             >
-              {dateInfo.dayOfWeek
-                ? t(`dayOfWeek.${dateInfo.dayOfWeek.toLowerCase()}`)
-                : ""}
+              {dateInfo.dayOfWeek || ""}
             </Text>
 
             {todayData.special ? (

@@ -2,8 +2,6 @@
   "welcome": "Bienvenue",
   "settings": "Paramètres",
   "likedContent": "Contenus aimés",
-  "archives": "Archives",
-  "previousScoops": "Scoops Précédents",
   "loading": "Chargement...",
   "error": "Erreur",
   "retry": "Réessayer",
@@ -32,7 +30,6 @@
   "breakthroughs": "Découvertes",
   "today": "Aujourd'hui",
   "yesterday": "Hier",
-  "noArchivedScoops": "Aucun scoop archivé disponible pour le moment",
   "emptyState": {
     "title": "Rien pour aujourd'hui",
     "description": "Une fois que votre base de données inclura la date d'aujourd'hui, vous découvrirez des saints, des célébrités, de l'histoire et des faits fascinants ici."

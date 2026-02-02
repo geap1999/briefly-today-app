@@ -1,7 +1,7 @@
+import { useLocale } from "@/contexts/locale-context";
 import { useEffect, useState } from "react";
 import { getDailyFacts } from "../services/supabase/daily-facts";
 import { getMovableHoliday } from "../utils/utils";
-import { useTimezone } from "@/contexts/timezone-context";
 
 interface DataItem {
   category: string;
@@ -25,6 +25,7 @@ type DateInfo = {
 };
 
 export function useDayData(region: "US" | "EU" = "US") {
+  const { locale, t } = useLocale();
   const [todayData, setTodayData] = useState<TodayData>({
     saint: null,
     celebrities: [],
@@ -45,18 +46,20 @@ export function useDayData(region: "US" | "EU" = "US") {
     const day = now.getDate();
     const year = now.getFullYear();
 
-    const dayOfWeek = now
+    const dayOfWeekKey = now
       .toLocaleDateString("en-US", { weekday: "long" })
-      .toUpperCase();
+      .toLowerCase();
 
-    const formattedDate = now.toLocaleDateString(
-      region === "US" ? "en-US" : "en-GB",
-      {
-        month: "2-digit",
-        day: "2-digit",
-        year: "numeric",
-      }
-    );
+    const dayOfWeek = t(`dayOfWeek.${dayOfWeekKey}`);
+
+    const dateLocale =
+      locale === "fr" ? "fr" : region === "EU" ? "en-GB" : "en-US";
+
+    const formattedDate = now.toLocaleDateString(dateLocale, {
+      month: "2-digit",
+      day: "2-digit",
+      year: "numeric",
+    });
 
     setDateInfo({ dayOfWeek, formattedDate });
 

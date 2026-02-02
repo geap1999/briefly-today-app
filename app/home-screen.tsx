@@ -116,14 +116,12 @@ const seasonThemes: Record<Season, SeasonTheme> = {
 interface HomeScreenProps {
   onSettingsPress: () => void;
   onLikedContentPress: () => void;
-  onArchivesPress: () => void;
   onDataLoaded?: () => void;
 }
 
 export default function HomeScreen({
   onSettingsPress,
   onLikedContentPress,
-  onArchivesPress,
   onDataLoaded,
 }: HomeScreenProps) {
   const { isDarkMode } = useTheme();
@@ -251,10 +249,6 @@ export default function HomeScreen({
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onLikedContentPress();
   };
-  const handleArchivesPress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    onArchivesPress();
-  };
 
   const handleLanguagePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -340,32 +334,11 @@ export default function HomeScreen({
                       : undefined,
                 }}
               >
-                {/* Header with Archives, Liked Content and Menu */}
+                {/* Header with Liked Content and Menu */}
                 <View className="flex-row items-center justify-end mb-3">
                   <View className="flex-row items-center gap-0">
                     {/* Icons group */}
                     <View className="flex-row items-center gap-3">
-                      <TouchableOpacity
-                        onPress={handleArchivesPress}
-                        className="rounded-full p-3 shadow-sm"
-                        activeOpacity={0.7}
-                        style={{
-                          backgroundColor: isDarkMode
-                            ? "rgba(30, 41, 59, 0.7)"
-                            : "rgba(255, 255, 255, 0.7)",
-                          shadowColor: "#000",
-                          shadowOffset: { width: 0, height: 2 },
-                          shadowOpacity: 0.1,
-                          shadowRadius: 4,
-                          elevation: 3,
-                        }}
-                      >
-                        <Ionicons
-                          name="archive-outline"
-                          size={24}
-                          color={isDarkMode ? "#60A5FA" : "#3B82F6"}
-                        />
-                      </TouchableOpacity>
                       <TouchableOpacity
                         onPress={handleLikedContentPress}
                         className="rounded-full p-3 shadow-sm"

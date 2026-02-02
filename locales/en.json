@@ -2,8 +2,6 @@
   "welcome": "Welcome",
   "settings": "Settings",
   "likedContent": "Liked Content",
-  "archives": "Archives",
-  "previousScoops": "Previous Scoops",
   "loading": "Loading...",
   "error": "Error",
   "retry": "Retry",
@@ -32,7 +30,6 @@
   "breakthroughs": "Breakthroughs",
   "today": "Today",
   "yesterday": "Yesterday",
-  "noArchivedScoops": "No archived scoops available yet",
   "emptyState": {
     "title": "Nothing for Today Yet",
     "description": "Once your dataset includes today's date, you'll discover saints, celebrities, history, and fascinating facts here."
