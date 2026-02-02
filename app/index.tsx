@@ -3,7 +3,7 @@ import { LocaleProvider } from "@/contexts/locale-context";
 import { ThemeProvider } from "@/contexts/theme-context";
 import { TimezoneProvider } from "@/contexts/timezone-context";
 import * as SplashScreen from "expo-splash-screen";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { View } from "react-native";
 import HomeScreen from "./home-screen";
 import LikedContentScreen from "./liked-content";
@@ -15,40 +15,9 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [showLikedContent, setShowLikedContent] = useState(false);
-  const [appIsReady, setAppIsReady] = useState(false);
-
-  useEffect(() => {
-    if (appIsReady) {
-      SplashScreen.hide();
-    }
-  }, [appIsReady]);
-
-  const onLayoutRootView = useCallback(async () => {
-    // Layout is ready
-  }, []);
-
-  if (!appIsReady) {
-    return (
-      <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-        <TimezoneProvider>
-          <LocaleProvider>
-            <ThemeProvider>
-              <ConsentHandler>
-                <HomeScreen
-                  onSettingsPress={() => setShowSettings(true)}
-                  onLikedContentPress={() => setShowLikedContent(true)}
-                  onDataLoaded={() => setAppIsReady(true)}
-                />
-              </ConsentHandler>
-            </ThemeProvider>
-          </LocaleProvider>
-        </TimezoneProvider>
-      </View>
-    );
-  }
 
   return (
-    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+    <View style={{ flex: 1 }}>
       <TimezoneProvider>
         <LocaleProvider>
           <ThemeProvider>
@@ -61,7 +30,6 @@ export default function App() {
                 <HomeScreen
                   onSettingsPress={() => setShowSettings(true)}
                   onLikedContentPress={() => setShowLikedContent(true)}
-                  onDataLoaded={() => setAppIsReady(true)}
                 />
               )}
             </ConsentHandler>
