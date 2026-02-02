@@ -7,6 +7,7 @@ import {
 import Constants from "expo-constants";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
+import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect, useState } from "react";
 import { Platform, Text, View } from "react-native";
 import mobileAds, {
@@ -28,6 +29,7 @@ export default function ConsentHandler({ children }: ConsentHandlerProps) {
   const { region, isLoading: isTimezoneLoading } = useTimezone();
   const { t } = useLocale();
   const [canStartApp, setCanStartApp] = useState(false);
+  const [splashHidden, setSplashHidden] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const floatAnimation = useAnimatedStyle(() => {
@@ -46,6 +48,18 @@ export default function ConsentHandler({ children }: ConsentHandlerProps) {
       ],
     };
   });
+
+  useEffect(() => {
+    if (!canStartApp && !splashHidden) {
+      SplashScreen.hideAsync()
+        .then(() => setSplashHidden(true))
+        .catch((e) => {
+          console.error("Error hiding splash screen:", e);
+          // Still mark as hidden to prevent retry loops
+          setSplashHidden(true);
+        });
+    }
+  }, [canStartApp, splashHidden]);
 
   useEffect(() => {
     async function setupPrivacyAndAds() {

@@ -116,13 +116,11 @@ const seasonThemes: Record<Season, SeasonTheme> = {
 interface HomeScreenProps {
   onSettingsPress: () => void;
   onLikedContentPress: () => void;
-  onDataLoaded?: () => void;
 }
 
 export default function HomeScreen({
   onSettingsPress,
   onLikedContentPress,
-  onDataLoaded,
 }: HomeScreenProps) {
   const { isDarkMode } = useTheme();
   const { t, locale } = useLocale();
@@ -201,13 +199,6 @@ export default function HomeScreen({
       fetchDailyScoop();
     }
   }, [locale]);
-
-  // Signal when initial data is loaded
-  useEffect(() => {
-    if (!loading && dateInfo.dayOfWeek && onDataLoaded) {
-      onDataLoaded();
-    }
-  }, [loading, dateInfo.dayOfWeek, onDataLoaded]);
 
   // Padding to allow header to disappear only when scoop is revealed and loaded
   const dynamicPaddingBottom =
