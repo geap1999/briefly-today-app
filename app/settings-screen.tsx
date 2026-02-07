@@ -259,7 +259,7 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
                       color: isDarkMode ? "#94A3B8" : "#64748B",
                     }}
                   >
-                    1.4.0
+                    1.4.2
                   </Text>
                 </View>
               </View>

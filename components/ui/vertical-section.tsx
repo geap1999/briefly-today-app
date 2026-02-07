@@ -13,6 +13,7 @@ import React, { useEffect, useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import WarningModal from "./warning-modal";
+import { useLocale } from "@/contexts/locale-context";
 
 interface Props {
   title: string;
@@ -36,6 +37,7 @@ export default function VerticalSection({
   const { isTablet } = useResponsive();
   const [likedFacts, setLikedFacts] = useState<Set<string>>(new Set());
   const [showWarningModal, setShowWarningModal] = useState(false);
+  const { t } = useLocale();
 
   useEffect(() => {
     const loadLikedStatus = async () => {
@@ -196,7 +198,7 @@ export default function VerticalSection({
                           color: accentColor,
                         }}
                       >
-                        Learn more
+                        {t("learnMore")}
                       </Text>
                     </View>
                     <TouchableOpacity
