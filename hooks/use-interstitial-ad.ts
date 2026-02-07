@@ -1,6 +1,6 @@
 import { getTimezoneDateString } from "@/utils/timezone-date";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Alert } from "react-native";
 import { AdEventType } from "react-native-google-mobile-ads";
 
@@ -13,60 +13,55 @@ export function useInterstitialAd(
   onAdClosed?: () => void,
   timezone = "America/Chicago",
 ) {
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   useEffect(() => {
-    const setupAd = async () => {
-      // If scoop already revealed, don't setup ad
-      if (isScoopRevealed) {
-        return;
-      }
+    // If scoop already revealed, don't setup ad
+    if (isScoopRevealed) {
+      return;
+    }
 
-      const unsubscribeLoaded = interstitial.addAdEventListener(
-        AdEventType.LOADED,
-        () => {
-          setAdLoaded(true);
-        },
-      );
+    const unsubscribeLoaded = interstitial.addAdEventListener(
+      AdEventType.LOADED,
+      () => {
+        setAdLoaded(true);
+      },
+    );
 
-      const unsubscribeClosed = interstitial.addAdEventListener(
-        AdEventType.CLOSED,
-        async () => {
-          try {
-            const today = getTimezoneDateString(timezone);
-            await fetchDailyScoop();
-            await AsyncStorage.setItem("last_revealed_date", today);
-            setIsScoopRevealed(true);
-          } catch (e) {
-            Alert.alert(
-              "Error",
-              "An error occurred. Please try refreshing the app.",
-            );
+    const unsubscribeClosed = interstitial.addAdEventListener(
+      AdEventType.CLOSED,
+      () => {
+        const today = getTimezoneDateString(timezone);
+
+        fetchDailyScoop().catch((e) => {
+          console.error("Failed to fetch daily scoop:", e);
+          Alert.alert(
+            "Error",
+            "An error occurred. Please try refreshing the app.",
+          );
+        });
+
+        AsyncStorage.setItem("last_revealed_date", today);
+        setIsScoopRevealed(true);
+        setAdLoaded(false);
+
+        if (onAdClosed) {
+          if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
           }
+          timeoutRef.current = setTimeout(() => {
+            onAdClosed();
+            timeoutRef.current = null;
+          }, 100);
+        }
+      },
+    );
 
-          setAdLoaded(false);
-
-          if (onAdClosed) {
-            setTimeout(() => onAdClosed(), 300);
-          }
-        },
-      );
-
-      interstitial.load();
-
-      return () => {
-        unsubscribeLoaded();
-        unsubscribeClosed();
-      };
-    };
-
-    let cleanup: (() => void) | undefined;
-    setupAd().then((cleanupFn) => {
-      cleanup = cleanupFn;
-    });
+    interstitial.load();
 
     return () => {
-      if (cleanup) {
-        cleanup();
-      }
+      unsubscribeLoaded();
+      unsubscribeClosed();
     };
   }, [
     interstitial,
@@ -75,7 +70,17 @@ export function useInterstitialAd(
     setAdLoaded,
     fetchDailyScoop,
     onAdClosed,
+    timezone,
   ]);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
+  }, []);
 }
 
 export default useInterstitialAd;
